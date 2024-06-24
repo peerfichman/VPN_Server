@@ -4,7 +4,7 @@ from Cryptodome.Cipher import AES
 from dotenv import load_dotenv
 
 load_dotenv()
-ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY')
+ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY').encode('raw_unicode_escape').decode('unicode_escape').encode("raw_unicode_escape")
 # Configuration
 SERVER_IP = '127.0.0.1'  # Replace with your server's IP address
 SERVER_PORT = 9999
