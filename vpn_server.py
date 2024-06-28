@@ -2,8 +2,8 @@ import socket
 from Crypto.Cipher import AES
 from dotenv import load_dotenv
 import os
-from scapy.all import IP
-import threading
+from scapy.all import *
+
 
 load_dotenv()
 
@@ -15,59 +15,47 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 def create_server_socket():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind((SERVER_IP, SERVER_PORT))
-    server_socket.listen(100)
+    server_socket.listen(5)
     return server_socket
 
 
-def recv_all(sock, length):
-    data = b''
-    while len(data) < length:
-        more = sock.recv(length - len(data))
-        if not more:
-            raise EOFError('Was expecting %d bytes but only received %d bytes before the socket closed' % (length, len(data)))
-        data += more
-    return data
+def forward_packet(packet):
+    """Forward a packet using Scapy."""
+    send(packet)
 
 
 def handle_client(client_socket, addr):
     print(f"Connection from {addr} has been established.")
 
     try:
-        # Receive encrypted data from client
-        nonce = recv_all(client_socket, 16)
-        tag = recv_all(client_socket, 16)
-        encrypted_data = recv_all(client_socket, 4096)
+        # Receive nonce and encrypted data from client
+        nonce = client_socket.recv(16)
+        encrypted_data = client_socket.recv(4096)
 
+        # Decrypt data
         cipher = AES.new(ENCRYPTION_KEY, AES.MODE_EAX, nonce=nonce)
-        decrypted_data = cipher.decrypt_and_verify(encrypted_data, tag)
+        decrypted_data = cipher.decrypt(encrypted_data)
 
-        print(f"Received from Client: {decrypted_data}")
+        print(f"Received data: {decrypted_data}")
 
-        # Extract destination IP address and port using scapy
-        ip_packet = IP(decrypted_data)
-        destination_ip = ip_packet.dst
-        destination_port = ip_packet.dport
-        print(f"Extracted Destination IP: {destination_ip} and Port: {destination_port}")
+        # Convert decrypted data to a Scapy packet
+        packet = IP(decrypted_data)
 
-        # Forward the decrypted data
-        forward_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        forward_socket.settimeout(30)  # Set a longer timeout for the connection
-        forward_socket.connect((destination_ip, destination_port))
-        forward_socket.sendall(decrypted_data)
+        # Forward the packet using Scapy
+        forward_packet(packet)
 
-        # Receive response and send back to client
-        response_data = recv_all(forward_socket, 4096)
-        cipher = AES.new(ENCRYPTION_KEY, AES.MODE_EAX)
-        encrypted_response, tag = cipher.encrypt_and_digest(response_data)
-        client_socket.sendall(cipher.nonce + tag + encrypted_response)
+        # Prepare the response
+        response_message = b'hello back'
+        response_cipher = AES.new(ENCRYPTION_KEY, AES.MODE_EAX)
+        encrypted_response = response_cipher.encrypt(response_message)
 
-        forward_socket.close()
+        # Send nonce and encrypted response
+        client_socket.sendall(response_cipher.nonce + encrypted_response)
 
-    except socket.timeout:
-        print(f"Connection to {destination_ip}:{destination_port} timed out.")
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"Error handling client: {e}")
     finally:
         client_socket.close()
 
@@ -78,8 +66,7 @@ def main():
 
     while True:
         client_socket, addr = server_socket.accept()
-        client_thread = threading.Thread(target=handle_client, args=(client_socket, addr))
-        client_thread.start()
+        handle_client(client_socket, addr)
 
 
 if __name__ == "__main__":
