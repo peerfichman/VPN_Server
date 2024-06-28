@@ -1,5 +1,5 @@
 import socket
-from Cryptodome.Cipher import AES
+from Crypto.Cipher import AES
 from dotenv import load_dotenv
 import os
 from scapy.all import IP
