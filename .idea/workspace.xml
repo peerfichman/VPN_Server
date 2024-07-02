@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ade9d79-a0b6-44d9-a918-86df14498c01" name="Changes" comment="thread" />
+    <list default="true" id="0ade9d79-a0b6-44d9-a918-86df14498c01" name="Changes" comment="thread">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VPN_Server/vpn_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/VPN_Server/vpn_server.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +63,7 @@
       <workItem from="1719212579089" duration="303000" />
       <workItem from="1719241609404" duration="1787000" />
       <workItem from="1719562052351" duration="2956000" />
-      <workItem from="1719913680551" duration="735000" />
+      <workItem from="1719913680551" duration="1906000" />
     </task>
     <task id="LOCAL-00001" summary="thread">
       <created>1719562170016</created>
