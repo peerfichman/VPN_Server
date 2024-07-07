@@ -19,7 +19,7 @@ def create_server_socket():
 
 def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
-    response = sr1(packet, timeout=1)
+    response = send(packet, timeout=1)
     return bytes(response) if response else b""
 
 
