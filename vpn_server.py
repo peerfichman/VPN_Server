@@ -1,14 +1,10 @@
 import socket
-from Crypto.Cipher import AES
 from dotenv import load_dotenv
 import os
 from scapy.all import *
 
-
 load_dotenv()
 
-ENCRYPTION_KEY = os.getenv('ENCRYPTION_KEY').encode('raw_unicode_escape').decode('unicode_escape').encode(
-    "raw_unicode_escape")
 SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
@@ -22,37 +18,28 @@ def create_server_socket():
 
 
 def forward_packet(packet):
-    """Forward a packet using Scapy."""
-    send(packet)
+    """Forward a packet using Scapy and return the response."""
+    response = sr1(packet, timeout=1)
+    return bytes(response) if response else b""
 
 
 def handle_client(client_socket, addr):
     print(f"Connection from {addr} has been established.")
 
     try:
-        # Receive nonce and encrypted data from client
-        nonce = client_socket.recv(16)
-        encrypted_data = client_socket.recv(4096)
+        # Receive data from client
+        data = client_socket.recv(4096)
 
-        # Decrypt data
-        cipher = AES.new(ENCRYPTION_KEY, AES.MODE_EAX, nonce=nonce)
-        decrypted_data = cipher.decrypt(encrypted_data)
+        print(f"Received data: {data}")
 
-        print(f"Received data: {decrypted_data}")
+        # Convert data to a Scapy packet
+        packet = IP(data)
 
-        # Convert decrypted data to a Scapy packet
-        packet = IP(decrypted_data)
-
-        # Forward the packet using Scapy
-        forward_packet(packet)
-
-        # Prepare the response
-        response_message = b'hello back'
-        response_cipher = AES.new(ENCRYPTION_KEY, AES.MODE_EAX)
-        encrypted_response = response_cipher.encrypt(response_message)
-
-        # Send nonce and encrypted response
-        client_socket.sendall(response_cipher.nonce + encrypted_response)
+        # Forward the packet using Scapy and get the response
+        response = forward_packet(packet)
+        print(f"Sent Response: {response}")
+        # Send the response back to the client
+        client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}")
