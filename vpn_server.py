@@ -20,6 +20,9 @@ def forward_packet(packet):
     print("Forwarding packet:")
     packet.show()
 
+    # Change the source IP address to the VPN server's IP
+    packet[IP].src = SERVER_IP
+
     # Ensure IP and TCP checksums are calculated
     packet[IP].chksum = None
     packet[TCP].chksum = None
