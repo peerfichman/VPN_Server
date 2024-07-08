@@ -32,9 +32,9 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    print('payload', packet.do_build_payload().decode())
+    print('payload', packet.do_build_payload().decode('ascii'))
     # Combine the layers into a new packet
-    new_packet = new_ip / new_tcp / packet.do_build_payload().decode()
+    new_packet = new_ip / new_tcp / packet.do_build_payload().decode('ascii')
     print(new_packet)
     return new_packet
 
