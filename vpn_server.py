@@ -32,7 +32,7 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    new_packet = new_ip / new_tcp / packet[Raw].load
+    new_packet = new_ip / new_tcp / packet[Raw].load if Raw in packet else ""
     new_packet.show()
     return new_packet
 
