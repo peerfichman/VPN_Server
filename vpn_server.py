@@ -11,16 +11,14 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 
 def decapsulate_packet(packet):
-    src_ip = SERVER_IP
     dst_ip = packet[IP].dst
-    # src_port = SERVER_PORT
     dst_port = packet[TCP].dport
     seq_num = packet[TCP].seq
     ack_num = packet[TCP].ack
     tcp_options = packet[TCP].options
     flags = packet[TCP].flags
-    return IP(src=src_ip, dst=dst_ip) / TCP(dport=dst_port, ack=ack_num, seq=seq_num, flags=flags,
-                                            options=tcp_options)
+    return IP(dst=dst_ip) / TCP(dport=dst_port, ack=ack_num, seq=seq_num, flags=flags,
+                                options=tcp_options) / Raw(load=packet.payload)
 
 
 def create_server_socket():
@@ -38,7 +36,7 @@ def forward_packet(packet):
     new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
     ans, unans = sr(new_packet)
-    print("ans",ans)
+    print("ans", ans)
     print("unans", unans)
     return ans if len(ans) > 0 else b""
 
