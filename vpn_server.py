@@ -11,15 +11,32 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 
 def decapsulate_packet(packet):
-    dst_ip = packet[IP].dst
-    dst_port = packet[TCP].dport
-    seq_num = packet[TCP].seq
-    ack_num = packet[TCP].ack
-    tcp_options = packet[TCP].options
-    flags = packet[TCP].flags
-    return IP(dst=dst_ip) / TCP(dport=dst_port, ack=ack_num, seq=seq_num, flags=flags,
-                                options=tcp_options) / Raw(load=packet.payload)
+    # Decapsulate the original packet to get the necessary layers
+    original_ip = packet[IP]
+    original_tcp = packet[TCP]
 
+    # Create a new IP layer with the VPN server's IP as the source
+    new_ip = IP(
+        src=SERVER_IP,  # Replace with your VPN server's IP
+        dst=original_ip.dst,
+        ttl=original_ip.ttl
+    )
+
+    # Create a new TCP layer, copying fields from the original packet
+    new_tcp = TCP(
+        sport=original_tcp.sport,
+        dport=original_tcp.dport,
+        seq=original_tcp.seq,
+        ack=original_tcp.ack,
+        flags=original_tcp.flags,
+        window=original_tcp.window,
+        options=original_tcp.options
+    )
+
+    # Combine the layers into a new packet
+    new_packet = new_ip / new_tcp
+    print(new_packet)
+    return new_packet
 
 def create_server_socket():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
