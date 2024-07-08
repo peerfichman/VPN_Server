@@ -34,7 +34,7 @@ def decapsulate_packet(packet):
     )
     # Combine the layers into a new packet
     new_packet = new_ip / new_tcp / str(packet.do_build_payload())
-    print(new_packet)
+    new_packet.show()
     return new_packet
 
 
