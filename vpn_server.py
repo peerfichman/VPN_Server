@@ -38,7 +38,8 @@ def forward_packet(packet):
     new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
     ans, unans = sr(new_packet)
-    print(ans)
+    print("ans",ans)
+    print("unans", unans)
     return ans if len(ans) > 0 else b""
 
 
@@ -60,7 +61,7 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        [client_socket.sendall(res.build()) for res in response]
+        [client_socket.sendall(res[1].build()) for res in response]
         # client_socket.sendall(response)
 
     except Exception as e:
