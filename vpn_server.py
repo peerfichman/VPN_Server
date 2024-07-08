@@ -37,8 +37,9 @@ def forward_packet(packet):
     # Change the source IP address to the VPN server's IP
     new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
-    _, response = sr(new_packet)
-    return response if len(response) > 0 else b""
+    ans, unans = sr(new_packet)
+    print(ans)
+    return ans if len(ans) > 0 else b""
 
 
 def handle_client(client_socket, addr):
