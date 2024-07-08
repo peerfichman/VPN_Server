@@ -80,7 +80,7 @@ def handle_client(client_socket, addr):
         # client_socket.sendall(response)
 
     except Exception as e:
-        print(f"Error handling client: {e}")
+        print(f"Error handling client: {e}, {e.with_traceback()}")
     finally:
         client_socket.close()
 
