@@ -37,6 +37,7 @@ def decapsulate_packet(packet):
     print(new_packet)
     return new_packet
 
+
 def create_server_socket():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -89,9 +90,31 @@ def main():
     print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
 
     # Test connectivity with an ICMP packet
-    test_ip = "148.66.138.145"
-    icmp_packet = IP(dst=test_ip) / ICMP()
-    response = sr1(icmp_packet, timeout=30)
+    # Define the IP layer
+    ip_layer = IP(
+        src="192.168.1.30",  # Source IP
+        dst=SERVER_IP,  # Destination IP
+        ttl=128,  # Time to live
+        id=18441,  # Identification
+        flags="DF"  # Don't Fragment
+    )
+
+    # Define the TCP layer
+    tcp_layer = TCP(
+        sport=61015,  # Source port
+        dport=80,  # Destination port
+        seq=3362635848,  # Sequence number
+        flags="S",  # SYN flag
+        window=64240,  # Window size
+        dataofs=8  # Data offset
+    )
+
+    # Combine the layers into a single packet
+    packet = ip_layer / tcp_layer
+
+    # Send the packet
+    response = send(packet)
+
     if response:
         print("ICMP test packet received response:")
         response.show()
