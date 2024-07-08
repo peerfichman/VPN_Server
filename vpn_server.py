@@ -13,7 +13,7 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 def decapsulate_packet(packet):
     src_ip = SERVER_IP
     dst_ip = packet[IP].dst
-    src_port = packet[TCP].sport
+    src_port = SERVER_PORT
     dst_port = packet[TCP].dport
     seq_num = packet[TCP].seq
     ack_num = packet[TCP].ack
