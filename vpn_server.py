@@ -92,8 +92,8 @@ def main():
     # Test connectivity with an ICMP packet
     # Define the IP layer
     ip_layer = IP(
-        src="192.168.1.30",  # Source IP
-        dst=SERVER_IP,  # Destination IP
+        src= SERVER_IP,  # Source IP
+        dst= "148.66.138.145",  # Destination IP
         ttl=128,  # Time to live
         id=18441,  # Identification
         flags="DF"  # Don't Fragment
