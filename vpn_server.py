@@ -24,6 +24,7 @@ def decapsulate_packet(packet):
 
     # Create a new TCP layer, copying fields from the original packet
     new_tcp = TCP(
+        sport= SERVER_PORT,
         dport=original_tcp.dport,
         seq=original_tcp.seq,
         ack=original_tcp.ack,
@@ -33,7 +34,7 @@ def decapsulate_packet(packet):
     )
 
     # Combine the layers into a new packet
-    new_packet = new_ip / new_tcp
+    new_packet = new_ip / new_tcp / packet.payload
     print(new_packet)
     return new_packet
 
