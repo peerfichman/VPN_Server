@@ -33,7 +33,7 @@ def decapsulate_packet(packet):
         options=original_tcp.options
     )
     packet[IP] = new_ip
-    packet[TCP]= new_tcp
+    packet[TCP] = new_tcp
     packet.show()
     return packet
 
