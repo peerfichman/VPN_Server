@@ -101,16 +101,17 @@ def main():
 
     # Define the TCP layer
     tcp_layer = TCP(
-        sport=61015,  # Source port
+        sport=SERVER_PORT,  # Source port
         dport=80,  # Destination port
         seq=3362635848,  # Sequence number
         flags="S",  # SYN flag
         window=64240,  # Window size
         dataofs=8  # Data offset
     )
+    http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    packet = ip_layer / tcp_layer
+    packet = ip_layer / tcp_layer /http_payload
 
     # Send the packet
     response = sr1(packet)
