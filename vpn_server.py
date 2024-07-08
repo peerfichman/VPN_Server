@@ -32,11 +32,10 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    print('do build payload', bytes(packet.payload.build()).decode('UTF8', 'replace'))
-    # Combine the layers into a new packet
-    new_packet = new_ip / new_tcp / bytes(packet.payload.build()).decode('UTF8', 'replace')
-    new_packet.show()
-    return new_packet
+    packet[IP] = new_ip
+    packet[TCP]= new_tcp
+    packet.show()
+    return packet
 
 
 def create_server_socket():
