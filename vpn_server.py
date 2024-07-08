@@ -2,11 +2,23 @@ import socket
 from dotenv import load_dotenv
 import os
 from scapy.all import *
+from scapy.layers.inet import IP, TCP
 
 load_dotenv()
 
 SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
+
+
+def decapsulate_packet(packet):
+    src_ip = SERVER_IP
+    dst_ip = packet[IP].dst
+    src_port = packet[TCP].sport
+    dst_port = packet[TCP].dport
+    seq_num = packet[TCP].seq
+    tcp_options = packet[TCP].options
+    return IP(src=src_ip, dst=dst_ip) / TCP(sport=src_port, dport=dst_port, seq=seq_num, flags='S',
+                                            options=tcp_options)
 
 
 def create_server_socket():
@@ -21,21 +33,10 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    packet[IP].src = SERVER_IP
-
-    # Ensure IP and TCP checksums are calculated
-    del packet[IP].chksum
-    if packet.haslayer(TCP):
-        del packet[TCP].chksum
-
-    # Optionally adjust TTL
-    packet[IP].ttl = 128
-
-    print("Forwarding packet:")
-    packet.show()
+    new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
-    _, response_packets = sr(packet)
-    return response_packets if len(response_packets) > 0 else b""
+    response = sr1(new_packet)
+    return response if response else b""
 
 
 def handle_client(client_socket, addr):
