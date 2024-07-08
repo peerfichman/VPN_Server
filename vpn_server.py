@@ -17,6 +17,8 @@ def create_server_socket():
 
 def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
+    print("Forwarding packet:")
+    packet.show()
     response = sr1(packet, timeout=30)
     return bytes(response) if response else b""
 
@@ -26,10 +28,12 @@ def handle_client(client_socket, addr):
     try:
         # Receive data from client
         data = client_socket.recv(4096)
-        print(f"Received data: {data}")
+        print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
         packet = IP(data)
+        print("Constructed Scapy packet from raw data:")
+        packet.show()
 
         # Forward the packet using Scapy and get the response
         response = forward_packet(packet)
