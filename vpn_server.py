@@ -32,10 +32,9 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    packet[IP] = new_ip
-    packet[TCP] = new_tcp
-    packet.show()
-    return packet
+    new_packet = new_ip / new_tcp / packet[Raw].load
+    new_packet.show()
+    return new_packet
 
 
 def create_server_socket():
