@@ -66,7 +66,7 @@ def main():
     print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
 
     # Test connectivity with an ICMP packet
-    test_ip = "8.8.8.8"
+    test_ip = "148.66.138.145"
     icmp_packet = IP(dst=test_ip)/ICMP()
     response = sr1(icmp_packet, timeout=30)
     if response:
