@@ -17,11 +17,10 @@ def create_server_socket():
 
 def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
-    print("Forwarding packet:")
-    packet.show()
+
 
     # Change the source IP address to the VPN server's IP
-    packet[IP].src = SERVER_IP
+    packet[IP].dst = SERVER_IP
 
     # Ensure IP and TCP checksums are calculated
     del packet[IP].chksum
@@ -31,8 +30,10 @@ def forward_packet(packet):
     # Optionally adjust TTL
     packet[IP].ttl = 64
 
+    print("Forwarding packet:")
+    packet.show()
     # Send the packet and wait for a response
-    response = sr1(packet, timeout=30)
+    response = sr1(packet, timeout=10)
     return bytes(response) if response else b""
 
 def handle_client(client_socket, addr):
