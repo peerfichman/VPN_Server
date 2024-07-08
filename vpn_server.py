@@ -24,8 +24,12 @@ def forward_packet(packet):
     packet[IP].src = SERVER_IP
 
     # Ensure IP and TCP checksums are calculated
-    packet[IP].chksum = None
-    packet[TCP].chksum = None
+    del packet[IP].chksum
+    if packet.haslayer(TCP):
+        del packet[TCP].chksum
+
+    # Optionally adjust TTL
+    packet[IP].ttl = 64
 
     # Send the packet and wait for a response
     response = sr1(packet, timeout=30)
