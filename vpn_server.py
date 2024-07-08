@@ -38,7 +38,7 @@ def forward_packet(packet):
     new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
     _, response = sr(new_packet)
-    return response if len(response) else b""
+    return response if len(response) > 0 else b""
 
 
 def handle_client(client_socket, addr):
