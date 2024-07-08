@@ -76,8 +76,8 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        [client_socket.sendall(res[1].build()) for res in response]
-        # client_socket.sendall(response)
+        # [client_socket.sendall(res[1].build()) for res in response]
+        client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}, {e.with_traceback()}")
