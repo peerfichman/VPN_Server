@@ -8,6 +8,7 @@ load_dotenv()
 SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
+
 def create_server_socket():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -15,9 +16,9 @@ def create_server_socket():
     server_socket.listen(5)
     return server_socket
 
+
 def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
-
 
     # Change the source IP address to the VPN server's IP
     packet[IP].src = SERVER_IP
@@ -33,8 +34,9 @@ def forward_packet(packet):
     print("Forwarding packet:")
     packet.show()
     # Send the packet and wait for a response
-    response = sr1(packet, timeout=10)
-    return bytes(response) if response else b""
+    _, response_packets = sr(packet)
+    return response_packets if len(response_packets) > 0 else b""
+
 
 def handle_client(client_socket, addr):
     print(f"Connection from {addr} has been established.")
@@ -51,15 +53,17 @@ def handle_client(client_socket, addr):
 
         # Forward the packet using Scapy and get the response
         response = forward_packet(packet)
-        print(f"Sent Response: {response}")
+        print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        client_socket.sendall(response)
+        [client_socket.sendall(response_packet) for response_packet in response]
+        # client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}")
     finally:
         client_socket.close()
+
 
 def main():
     server_socket = create_server_socket()
@@ -67,7 +71,7 @@ def main():
 
     # Test connectivity with an ICMP packet
     test_ip = "148.66.138.145"
-    icmp_packet = IP(dst=test_ip)/ICMP()
+    icmp_packet = IP(dst=test_ip) / ICMP()
     response = sr1(icmp_packet, timeout=30)
     if response:
         print("ICMP test packet received response:")
@@ -78,6 +82,7 @@ def main():
     while True:
         client_socket, addr = server_socket.accept()
         handle_client(client_socket, addr)
+
 
 if __name__ == "__main__":
     main()
