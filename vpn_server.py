@@ -24,7 +24,7 @@ def decapsulate_packet(packet):
 
     # Create a new TCP layer, copying fields from the original packet
     new_tcp = TCP(
-        sport= SERVER_PORT,
+        sport=SERVER_PORT,
         dport=original_tcp.dport,
         seq=original_tcp.seq,
         ack=original_tcp.ack,
@@ -32,9 +32,9 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    print('do build payload', packet.do_build_payload())
+    print('do build payload', bytes(packet[TCP].payload).decode('UTF8', 'replace'))
     # Combine the layers into a new packet
-    new_packet = new_ip / new_tcp / bytes(packet.do_build_payload()).decode()
+    new_packet = new_ip / new_tcp / bytes(packet[TCP].payload).decode('UTF8', 'replace')
     new_packet.show()
     return new_packet
 
@@ -93,8 +93,8 @@ def main():
     # Test connectivity with an ICMP packet
     # Define the IP layer
     ip_layer = IP(
-        src= SERVER_IP,  # Source IP
-        dst= "148.66.138.145",  # Destination IP
+        src=SERVER_IP,  # Source IP
+        dst="148.66.138.145",  # Destination IP
         ttl=128,  # Time to live
         id=18441,  # Identification
         flags="DF"  # Don't Fragment
@@ -112,7 +112,7 @@ def main():
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    packet = ip_layer / tcp_layer /http_payload
+    packet = ip_layer / tcp_layer / http_payload
 
     # Send the packet
     response = sr1(packet)
