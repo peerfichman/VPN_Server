@@ -20,7 +20,7 @@ def forward_packet(packet):
 
 
     # Change the source IP address to the VPN server's IP
-    packet[IP].dst = SERVER_IP
+    packet[IP].src = SERVER_IP
 
     # Ensure IP and TCP checksums are calculated
     del packet[IP].chksum
@@ -28,7 +28,7 @@ def forward_packet(packet):
         del packet[TCP].chksum
 
     # Optionally adjust TTL
-    packet[IP].ttl = 64
+    packet[IP].ttl = 128
 
     print("Forwarding packet:")
     packet.show()
