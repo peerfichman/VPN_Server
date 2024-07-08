@@ -60,7 +60,7 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        [client_socket.sendall(bytes(res)) for res in response]
+        [client_socket.sendall(res.build()) for res in response]
         # client_socket.sendall(response)
 
     except Exception as e:
