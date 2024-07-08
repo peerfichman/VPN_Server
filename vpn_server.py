@@ -113,7 +113,7 @@ def main():
     packet = ip_layer / tcp_layer
 
     # Send the packet
-    response = send(packet)
+    response = sr1(packet)
 
     if response:
         print("ICMP test packet received response:")
