@@ -19,6 +19,12 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
     print("Forwarding packet:")
     packet.show()
+
+    # Ensure IP and TCP checksums are calculated
+    packet[IP].chksum = None
+    packet[TCP].chksum = None
+
+    # Send the packet and wait for a response
     response = sr1(packet, timeout=30)
     return bytes(response) if response else b""
 
