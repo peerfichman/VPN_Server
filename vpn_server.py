@@ -32,7 +32,8 @@ def decapsulate_packet(packet):
         window=original_tcp.window,
         options=original_tcp.options
     )
-    new_packet = new_ip / new_tcp / Raw(load=packet[TCP].payload)
+
+    new_packet = new_ip / new_tcp
     new_packet.show()
     return new_packet
 
@@ -49,9 +50,10 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    new_packet = decapsulate_packet(packet)
+    # new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
-    ans, unans = sr(new_packet, iface='enp0s3')
+    # ans, unans = sr(new_packet, iface='enp0s3')
+    ans, unans = sr(packet, iface='enp0s3')
     print("ans", ans)
     print("unans", unans)
     return ans if len(ans) > 0 else b""
