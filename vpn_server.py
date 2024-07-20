@@ -22,7 +22,7 @@ def decapsulate_packet(packet):
     # )
 
     # Create a new IP layer with the VPN server's IP as the source
-    new_ip = IP(
+    ip_layer = IP(
         src=SERVER_IP,  # Source IP
         dst=original_ip.dst,  # Destination IP
         ttl=128,  # Time to live
@@ -41,7 +41,7 @@ def decapsulate_packet(packet):
     #     options=original_tcp.options
     # )
 
-    new_tcp = TCP(
+    tcp_layer = TCP(
         sport=SERVER_PORT,  # Source port
         dport=80,  # Destination port
         seq=3362635848,  # Sequence number
@@ -52,7 +52,7 @@ def decapsulate_packet(packet):
 
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
-    new_packet = new_ip / new_tcp / http_payload
+    new_packet = ip_layer / tcp_layer / http_payload
     new_packet.show()
     return new_packet
 
@@ -79,6 +79,12 @@ def forward_packet(packet):
     
     # Send the packet
     response = sr1(new_packet)
+    if response:
+        print("packet received response:")
+        response.show()
+    else:
+        print("packet received no response")
+
     return response if response else b""
 
 
@@ -135,19 +141,20 @@ def main():
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    # packet = ip_layer / tcp_layer / http_payload
-
+    packet = ip_layer / tcp_layer / http_payload
+    packet.show()
     # Send the packet
-    # response = sr1(packet)
+    response = sr1(packet)
 
-    # if response:
-    #     print("ICMP test packet received response:")
-    #     response.show()
-    # else:
-    #     print("ICMP test packet received no response")
+    if response:
+        print("ICMP test packet received response:")
+        response.show()
+    else:
+        print("ICMP test packet received no response")
 
     while True:
         client_socket, addr = server_socket.accept()
+        print("here")
         handle_client(client_socket, addr)
 
 
