@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from scapy.all import *
 from scapy.layers.inet import IP, TCP, Ether
+import scapy.layers.http as http
 
 load_dotenv()
 
@@ -40,7 +41,7 @@ def decapsulate_packet(packet):
     new_packet = ip_layer / tcp_layer / http_payload
     new_packet.show()
     # Send the packet
-    response = sr1(new_packet)
+    response = sr1(new_packet, verbose=True)
 
     if response:
         print("ICMP test packet received response:")
@@ -81,6 +82,11 @@ def forward_packet(packet):
 
     return response if response else b""
 
+def http_request():
+    client = http.HTTP_Client()
+    resp = client.request("http://148.66.138.145:80")
+    print(resp)
+    client.close()
 
 def handle_client(client_socket, addr):
     print(f"Connection from {addr} has been established.")
@@ -137,6 +143,7 @@ def main():
     # Combine the layers into a single packet
     packet = ip_layer / tcp_layer / http_payload
     packet.show()
+    
     # Send the packet
     # response = sr1(packet)
 
@@ -145,6 +152,8 @@ def main():
     #     response.show()
     # else:
     #     print("ICMP test packet received no response")
+
+    http_request()
 
     while True:
         client_socket, addr = server_socket.accept()
