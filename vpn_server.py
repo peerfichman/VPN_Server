@@ -60,9 +60,9 @@ def forward_packet(packet):
     del packet[TCP].chksum
     packet.show2()
 
-    ans, unans = sr(packet, iface='enp0s3')
+    ans = sr1(packet)
     print("ans", ans)
-    print("unans", unans)
+
     return ans if len(ans) > 0 else b""
     # return response if response else b""
 
