@@ -61,11 +61,11 @@ def forward_packet(packet):
 
     print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
     #ans, unans = sr(new_packet, iface='enp0s3')
-    ans, unans = sr(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n", iface='enp0s3')
-    print("ans", ans)
-    print("unans", unans)
-    return ans if len(ans) > 0 else b""
-    # return response if response else b""
+    response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n", iface='enp0s3')
+    # print("ans", ans)
+    # print("unans", unans)
+    # return ans if len(ans) > 0 else b""
+    return response if response else b""
 
 
 def handle_client(client_socket, addr):
@@ -86,8 +86,8 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        [client_socket.sendall(res[1].build()) for res in response]
-        # client_socket.sendall(response)
+        #[client_socket.sendall(res[1].build()) for res in response]
+        client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}, {e.with_traceback()}")
