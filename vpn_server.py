@@ -15,28 +15,44 @@ def decapsulate_packet(packet):
     original_ip = packet[IP]
     original_tcp = packet[TCP]
 
+    # new_ip = IP(
+    #     src=SERVER_IP,  # Replace with your VPN server's IP
+    #     dst=original_ip.dst,
+    #     ttl=original_ip.ttl
+    # )
+
     # Create a new IP layer with the VPN server's IP as the source
     new_ip = IP(
-        src=SERVER_IP,  # Replace with your VPN server's IP
-        dst=original_ip.dst,
-        ttl=original_ip.ttl,
-        id=original_ip.id,  # Identification
+        src=SERVER_IP,  # Source IP
+        dst=original_ip.dst,  # Destination IP
+        ttl=128,  # Time to live
+        id=18441,  # Identification
         flags="DF"  # Don't Fragment
     )
 
     # Create a new TCP layer, copying fields from the original packet
+    # new_tcp = TCP(
+    #     sport=SERVER_PORT,
+    #     dport=original_tcp.dport,
+    #     seq=original_tcp.seq,
+    #     ack=original_tcp.ack,
+    #     flags=original_tcp.flags,
+    #     window=original_tcp.window,
+    #     options=original_tcp.options
+    # )
+
     new_tcp = TCP(
-        sport=SERVER_PORT,
-        dport=original_tcp.dport,
-        seq=original_tcp.seq,
-        ack=original_tcp.ack,
-        flags=original_tcp.flags,
-        window=original_tcp.window,
-        options=original_tcp.options,
-        dataofs=8
+        sport=SERVER_PORT,  # Source port
+        dport=80,  # Destination port
+        seq=3362635848,  # Sequence number
+        flags="S",  # SYN flag
+        window=64240,  # Window size
+        dataofs=8  # Data offset
     )
 
-    new_packet = new_ip / new_tcp / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
+    http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
+
+    new_packet = new_ip / new_tcp / http_payload
     new_packet.show()
     return new_packet
 
@@ -54,23 +70,14 @@ def forward_packet(packet):
 
     # Change the source IP address to the VPN server's IP
     new_packet = decapsulate_packet(packet)
+    
     # Send the packet and wait for a response
-    #
-    # packet[IP].src = SERVER_IP
-    # packet[TCP].sport = SERVER_PORT
-    # del packet[IP].chksum
-    # del packet[TCP].chksum
-    # packet.show2()
-
-    # print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
-    print("packet sent from server:", new_packet)
-    print("packet show:")
-    new_packet.show();
     # ans, unans = sr(new_packet, iface='enp0s3')
-    # response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n")
     # print("ans", ans)
     # print("unans", unans)
     # return ans if len(ans) > 0 else b""
+    
+    # Send the packet
     response = sr1(new_packet)
     return response if response else b""
 
@@ -87,14 +94,14 @@ def handle_client(client_socket, addr):
         packet = IP(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
-        print("packet we send from the server:", packet)
+
         # Forward the packet using Scapy and get the response
         response = forward_packet(packet)
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        # [client_socket.sendall(res[1].build()) for res in response]
-        client_socket.sendall(response)
+        [client_socket.sendall(res[1].build()) for res in response]
+        # client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}, {e.with_traceback()}")
@@ -128,16 +135,14 @@ def main():
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    packet = ip_layer / tcp_layer / http_payload
+    # packet = ip_layer / tcp_layer / http_payload
 
-    print("packet we send:", packet)
     # Send the packet
     # response = sr1(packet)
-    #
+
     # if response:
     #     print("ICMP test packet received response:")
     #     response.show()
-    #     print("TEST RESPONSE", response)
     # else:
     #     print("ICMP test packet received no response")
 
