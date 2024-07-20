@@ -59,9 +59,9 @@ def forward_packet(packet):
     del packet[TCP].chksum
     packet.show2()
 
-    print(packet)
+    print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
     #ans, unans = sr(new_packet, iface='enp0s3')
-    ans, unans = sr(packet, iface='enp0s3')
+    ans, unans = sr(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n", iface='enp0s3')
     print("ans", ans)
     print("unans", unans)
     return ans if len(ans) > 0 else b""
