@@ -2,7 +2,7 @@ import socket
 from dotenv import load_dotenv
 import os
 from scapy.all import *
-from scapy.layers.inet import IP, TCP, Ether
+from scapy.layers.inet import IP, TCP
 
 load_dotenv()
 
@@ -24,7 +24,7 @@ def decapsulate_packet(packet):
     # Create a new IP layer with the VPN server's IP as the source
     new_ip = IP(
         src=SERVER_IP,  # Source IP
-        dst="148.66.138.145",  # Destination IP
+        dst=original_ip.dst,  # Destination IP
         ttl=128,  # Time to live
         id=18441,  # Identification
         flags="DF"  # Don't Fragment
@@ -91,7 +91,7 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
-        packet = Ether(data)
+        packet = IP(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
 
