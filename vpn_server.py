@@ -2,7 +2,7 @@ import socket
 from dotenv import load_dotenv
 import os
 from scapy.all import *
-from scapy.layers.inet import IP, TCP
+from scapy.layers.inet import IP, TCP, Ether
 
 load_dotenv()
 
@@ -91,7 +91,7 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
-        packet = IP(data)
+        packet = Ether(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
 
