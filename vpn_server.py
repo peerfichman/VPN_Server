@@ -24,7 +24,7 @@ def decapsulate_packet(packet):
     # Create a new IP layer with the VPN server's IP as the source
     new_ip = IP(
         src=SERVER_IP,  # Source IP
-        dst=original_ip.dst,  # Destination IP
+        dst="148.66.138.145",  # Destination IP
         ttl=128,  # Time to live
         id=18441,  # Identification
         flags="DF"  # Don't Fragment
