@@ -10,131 +10,35 @@ SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 
-def decapsulate_packet(packet):
-    # Decapsulate the original packet to get the necessary layers
-    original_ip = packet[IP]
-    original_tcp = packet[TCP]
-
-    # Create a new IP layer with the VPN server's IP as the source
-    new_ip = IP(
-        src=SERVER_IP,  # Replace with your VPN server's IP
-        dst=original_ip.dst,
-        ttl=original_ip.ttl
-    )
-
-    # Create a new TCP layer, copying fields from the original packet
-    new_tcp = TCP(
-        sport=SERVER_PORT,
-        dport=original_tcp.dport,
-        seq=original_tcp.seq,
-        ack=original_tcp.ack,
-        flags=original_tcp.flags,
-        window=original_tcp.window,
-        options=original_tcp.options
-    )
-
-    new_packet = new_ip / new_tcp
-    new_packet.show()
-    return new_packet
-
-
-def create_server_socket():
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_socket.bind((SERVER_IP, SERVER_PORT))
-    server_socket.listen(5)
-    return server_socket
-
-
-def forward_packet(packet):
-    """Forward a packet using Scapy and return the response."""
-
-    # Change the source IP address to the VPN server's IP
-    # new_packet = decapsulate_packet(packet)
-    # Send the packet and wait for a response
-    # ans, unans = sr(new_packet, iface='enp0s3')
-
-    packet[IP].src = SERVER_IP
-    packet[TCP].sport = SERVER_PORT
-    del packet[IP].chksum
-    del packet[TCP].chksum
-    packet.show2()
-
-    ans = sr1(packet)
-    print("ans", ans)
-
-    return ans if len(ans) > 0 else b""
-    # return response if response else b""
-
-
-def handle_client(client_socket, addr):
-    print(f"Connection from {addr} has been established.")
-
-    try:
-        # Receive data from client
-        data = client_socket.recv(4096)
-        print(f"Received raw data: {data}")
-
-        # Convert raw data to a Scapy IP packet
-        packet = IP(data)
-        print("Constructed Scapy packet from raw data:")
-        packet.show()
-
-        # Forward the packet using Scapy and get the response
-        response = forward_packet(packet)
-        print(f"Sent Response packets: {response}")
-
-        # Send the response back to the client
-        [client_socket.sendall(res[1].build()) for res in response]
-        # client_socket.sendall(response)
-
-    except Exception as e:
-        print(f"Error handling client: {e}, {e.with_traceback()}")
-    finally:
-        client_socket.close()
-
-
 def main():
-    server_socket = create_server_socket()
-    print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
+    # Create a socket to listen for incoming connections
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind((SERVER_IP, SERVER_PORT))
+        sock.listen()
 
-    # Test connectivity with an ICMP packet
-    # Define the IP layer
-    ip_layer = IP(
-        src=SERVER_IP,  # Source IP
-        dst="148.66.138.145",  # Destination IP
-        ttl=128,  # Time to live
-        id=18441,  # Identification
-        flags="DF"  # Don't Fragment
-    )
+        print(f"Server listening on {SERVER_IP}:{SERVER_PORT}")
 
-    # Define the TCP layer
-    tcp_layer = TCP(
-        sport=SERVER_PORT,  # Source port
-        dport=80,  # Destination port
-        seq=3362635848,  # Sequence number
-        flags="S",  # SYN flag
-        window=64240,  # Window size
-        dataofs=8  # Data offset
-    )
-    http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
+        # Accept client connection
+        conn, addr = sock.accept()
+        with conn:
+            print(f"Connected by {addr}")
 
-    # Combine the layers into a single packet
-    packet = ip_layer / tcp_layer / http_payload
+            while True:
+                # Receive data from the client
+                data = conn.recv(65535)
+                if not data:
+                    break
 
-    # Send the packet
-    response = sr1(packet)
+                # Extract destination IP and packet data
+                destination_ip, packet_data = data.split(b' ', 1)
 
-    if response:
-        print("ICMP test packet received response:")
-        response.show()
-    else:
-        print("ICMP test packet received no response")
+                # Decapsulate and re-encapsulate the packet
+                packet = IP(packet_data)
+                packet.src = SERVER_IP
+                packet.dst = destination_ip.decode()
 
-    while True:
-        client_socket, addr = server_socket.accept()
-        handle_client(client_socket, addr)
+                # Send the packet using scapy
+                send(packet)
 
-
-if __name__ == "__main__":
-    main()
+                # Send the modified packet back to the client
+                conn.sendall(bytes(packet))
