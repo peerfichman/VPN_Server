@@ -80,7 +80,7 @@ def handle_client(client_socket, addr):
         packet = IP(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
-
+        print("packet we send from the server:", packet)
         # Forward the packet using Scapy and get the response
         response = forward_packet(packet)
         print(f"Sent Response packets: {response}")
@@ -123,6 +123,8 @@ def main():
     # Combine the layers into a single packet
     packet = ip_layer / tcp_layer / http_payload
 
+
+    print("packet we send:", packet)
     # Send the packet
     response = sr1(packet)
 
