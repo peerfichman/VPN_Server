@@ -61,7 +61,7 @@ def forward_packet(packet):
 
     print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
     #ans, unans = sr(new_packet, iface='enp0s3')
-    response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n", iface='enp0s3')
+    response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n")
     # print("ans", ans)
     # print("unans", unans)
     # return ans if len(ans) > 0 else b""
@@ -131,6 +131,7 @@ def main():
     if response:
         print("ICMP test packet received response:")
         response.show()
+        print("TEST RESPONSE", response)
     else:
         print("ICMP test packet received no response")
 
