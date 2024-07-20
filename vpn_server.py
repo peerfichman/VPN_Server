@@ -33,6 +33,7 @@ def decapsulate_packet(packet):
         window=64240,  # Window size
         dataofs=8  # Data offset
     )
+    
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
