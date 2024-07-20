@@ -2,7 +2,7 @@ import socket
 from dotenv import load_dotenv
 import os
 from scapy.all import *
-from scapy.layers.inet import IP, TCP
+from scapy.layers.inet import IP, TCP, Ether
 
 load_dotenv()
 
@@ -69,7 +69,7 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    new_packet = decapsulate_packet(packet)
+    # new_packet = decapsulate_packet(packet)
     
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
@@ -78,7 +78,7 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    response = sr1(new_packet)
+    response = sendp(packet)
     if response:
         print("packet received response:")
         response.show()
@@ -97,7 +97,7 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
-        packet = IP(data)
+        packet = Ether(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
 
