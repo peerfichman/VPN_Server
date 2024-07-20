@@ -14,33 +14,17 @@ def decapsulate_packet(packet):
     # Decapsulate the original packet to get the necessary layers
     original_ip = packet[IP]
     original_tcp = packet[TCP]
-
-    # new_ip = IP(
-    #     src=SERVER_IP,  # Replace with your VPN server's IP
-    #     dst=original_ip.dst,
-    #     ttl=original_ip.ttl
-    # )
-
-    # Create a new IP layer with the VPN server's IP as the source
+ # Test connectivity with an ICMP packet
+    # Define the IP layer
     ip_layer = IP(
         src=SERVER_IP,  # Source IP
-        dst=original_ip.dst,  # Destination IP
+        dst="148.66.138.145",  # Destination IP
         ttl=128,  # Time to live
         id=18441,  # Identification
         flags="DF"  # Don't Fragment
     )
 
-    # Create a new TCP layer, copying fields from the original packet
-    # new_tcp = TCP(
-    #     sport=SERVER_PORT,
-    #     dport=original_tcp.dport,
-    #     seq=original_tcp.seq,
-    #     ack=original_tcp.ack,
-    #     flags=original_tcp.flags,
-    #     window=original_tcp.window,
-    #     options=original_tcp.options
-    # )
-
+    # Define the TCP layer
     tcp_layer = TCP(
         sport=SERVER_PORT,  # Source port
         dport=80,  # Destination port
@@ -49,18 +33,19 @@ def decapsulate_packet(packet):
         window=64240,  # Window size
         dataofs=8  # Data offset
     )
-
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
-    new_packet = ip_layer / tcp_layer / http_payload
-    new_packet.show()
+    # Combine the layers into a single packet
+    packet = ip_layer / tcp_layer / http_payload
+    packet.show()
+    # Send the packet
+    response = sr1(packet)
 
-    response = sr1(new_packet)
     if response:
-        print("packet received response:")
+        print("ICMP test packet received response:")
         response.show()
     else:
-        print("packet received no response")
+        print("ICMP test packet received no response")
 
     return response
 
