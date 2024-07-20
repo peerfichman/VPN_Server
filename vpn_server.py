@@ -10,6 +10,7 @@ SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 
+
 def main():
     # Create a socket to listen for incoming connections
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -42,3 +43,7 @@ def main():
 
                 # Send the modified packet back to the client
                 conn.sendall(bytes(packet))
+
+
+if __name__ == "__main__":
+    main()
