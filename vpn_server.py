@@ -54,7 +54,15 @@ def decapsulate_packet(packet):
 
     new_packet = ip_layer / tcp_layer / http_payload
     new_packet.show()
-    return new_packet
+
+    response = sr1(new_packet)
+    if response:
+        print("packet received response:")
+        response.show()
+    else:
+        print("packet received no response")
+
+    return response
 
 
 def create_server_socket():
@@ -69,7 +77,7 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    # new_packet = decapsulate_packet(packet)
+    response = decapsulate_packet(packet)
     
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
@@ -78,12 +86,12 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    response = sendp(packet)
-    if response:
-        print("packet received response:")
-        response.show()
-    else:
-        print("packet received no response")
+    # response = sr1(new_packet)
+    # if response:
+    #     print("packet received response:")
+    #     response.show()
+    # else:
+    #     print("packet received no response")
 
     return response if response else b""
 
