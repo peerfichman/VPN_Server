@@ -33,7 +33,7 @@ def decapsulate_packet(packet):
         options=original_tcp.options
     )
 
-    new_packet = new_ip / new_tcp / packet[TCP].payload
+    new_packet = new_ip / new_tcp / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
     new_packet.show()
     return new_packet
 
@@ -50,21 +50,25 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    # new_packet = decapsulate_packet(packet)
+    new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
+    #
+    # packet[IP].src = SERVER_IP
+    # packet[TCP].sport = SERVER_PORT
+    # del packet[IP].chksum
+    # del packet[TCP].chksum
+    # packet.show2()
 
-    packet[IP].src = SERVER_IP
-    packet[TCP].sport = SERVER_PORT
-    del packet[IP].chksum
-    del packet[TCP].chksum
-    packet.show2()
-
-    print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
+    #print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
+    print("packet sent from server:", new_packet)
+    print("packet show:")
+    new_packet.show();
     #ans, unans = sr(new_packet, iface='enp0s3')
-    response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n")
+    # response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n")
     # print("ans", ans)
     # print("unans", unans)
     # return ans if len(ans) > 0 else b""
+    response = sr1(new_packet)
     return response if response else b""
 
 
