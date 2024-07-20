@@ -53,6 +53,11 @@ def forward_packet(packet):
     # new_packet = decapsulate_packet(packet)
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
+
+    packet[IP].src = SERVER_IP
+    packet[TCP].sport = SERVER_PORT
+
+
     ans, unans = sr(packet, iface='enp0s3')
     print("ans", ans)
     print("unans", unans)
