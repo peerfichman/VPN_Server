@@ -19,7 +19,9 @@ def decapsulate_packet(packet):
     new_ip = IP(
         src=SERVER_IP,  # Replace with your VPN server's IP
         dst=original_ip.dst,
-        ttl=original_ip.ttl
+        ttl=original_ip.ttl,
+        id=original_ip.id,  # Identification
+        flags="DF"  # Don't Fragment
     )
 
     # Create a new TCP layer, copying fields from the original packet
@@ -30,7 +32,8 @@ def decapsulate_packet(packet):
         ack=original_tcp.ack,
         flags=original_tcp.flags,
         window=original_tcp.window,
-        options=original_tcp.options
+        options=original_tcp.options,
+        dataofs=8
     )
 
     new_packet = new_ip / new_tcp / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
@@ -59,11 +62,11 @@ def forward_packet(packet):
     # del packet[TCP].chksum
     # packet.show2()
 
-    #print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
+    # print((packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"))
     print("packet sent from server:", new_packet)
     print("packet show:")
     new_packet.show();
-    #ans, unans = sr(new_packet, iface='enp0s3')
+    # ans, unans = sr(new_packet, iface='enp0s3')
     # response = sr1(packet / "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n")
     # print("ans", ans)
     # print("unans", unans)
@@ -90,7 +93,7 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        #[client_socket.sendall(res[1].build()) for res in response]
+        # [client_socket.sendall(res[1].build()) for res in response]
         client_socket.sendall(response)
 
     except Exception as e:
@@ -127,17 +130,16 @@ def main():
     # Combine the layers into a single packet
     packet = ip_layer / tcp_layer / http_payload
 
-
     print("packet we send:", packet)
     # Send the packet
-    response = sr1(packet)
-
-    if response:
-        print("ICMP test packet received response:")
-        response.show()
-        print("TEST RESPONSE", response)
-    else:
-        print("ICMP test packet received no response")
+    # response = sr1(packet)
+    #
+    # if response:
+    #     print("ICMP test packet received response:")
+    #     response.show()
+    #     print("TEST RESPONSE", response)
+    # else:
+    #     print("ICMP test packet received no response")
 
     while True:
         client_socket, addr = server_socket.accept()
