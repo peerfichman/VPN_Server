@@ -12,8 +12,8 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 
 def decapsulate_packet(packet):
     # Decapsulate the original packet to get the necessary layers
-    original_ip = packet[IP]
-    original_tcp = packet[TCP]
+    # original_ip = packet[IP]
+    # original_tcp = packet[TCP]
  # Test connectivity with an ICMP packet
     # Define the IP layer
     ip_layer = IP(
@@ -37,10 +37,10 @@ def decapsulate_packet(packet):
     http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    packet = ip_layer / tcp_layer / http_payload
-    packet.show()
+    new_packet = ip_layer / tcp_layer / http_payload
+    new_packet.show()
     # Send the packet
-    response = sr1(packet)
+    response = sr1(new_packet)
 
     if response:
         print("ICMP test packet received response:")
