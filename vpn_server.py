@@ -54,9 +54,11 @@ def forward_packet(packet):
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
 
-    # packet[IP].src = SERVER_IP
-    # packet[TCP].sport = SERVER_PORT
-
+    packet[IP].src = SERVER_IP
+    packet[TCP].sport = SERVER_PORT
+    del packet[IP].chksum
+    del packet[TCP].chksum
+    packet.show2()
 
     ans, unans = sr(packet, iface='enp0s3')
     print("ans", ans)
