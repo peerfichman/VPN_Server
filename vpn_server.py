@@ -39,10 +39,10 @@ def main():
                 packet.dst = destination_ip.decode()
 
                 # Send the packet using scapy
-                send(packet)
+                ans, unans = sr(packet)
 
                 # Send the modified packet back to the client
-                conn.sendall(bytes(packet))
+                conn.sendall(bytes(ans))
 
 
 if __name__ == "__main__":
