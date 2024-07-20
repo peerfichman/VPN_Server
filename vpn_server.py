@@ -137,13 +137,13 @@ def main():
     packet = ip_layer / tcp_layer / http_payload
     packet.show()
     # Send the packet
-    response = sr1(packet)
+    # response = sr1(packet)
 
-    if response:
-        print("ICMP test packet received response:")
-        response.show()
-    else:
-        print("ICMP test packet received no response")
+    # if response:
+    #     print("ICMP test packet received response:")
+    #     response.show()
+    # else:
+    #     print("ICMP test packet received no response")
 
     while True:
         client_socket, addr = server_socket.accept()
