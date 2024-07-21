@@ -7,13 +7,11 @@ import os
 import hashlib
 
 SERVER_UDP_PORT = 5050  # Random port
-SERVER_UDP_IP = "10.0.2.5"  # prashant.at
+SERVER_UDP_IP = "10.0.2.15"  # prashant.at
 
-users = {"10.10.0.2": hashlib.md5(b'pw1').digest(),
-         "10.10.0.3": hashlib.md5(b'pw2').digest()}  # Keeps track of usernames and passwords. I know MD5 is bad!
-addresses = {"10.0.2.5": (SERVER_UDP_IP, SERVER_UDP_PORT), "10.10.0.2": None,
-             "10.10.0.3": None}  # Keeps track of current communicating person
-messages = {"10.10.0.1": [], "10.10.0.2": [], "10.10.0.3": []}
+users = {"10.0.2.5": hashlib.md5(b'pw1').digest()}  # Keeps track of usernames and passwords. I know MD5 is bad!
+addresses = {"10.0.2.15": (SERVER_UDP_IP, SERVER_UDP_PORT), "10.0.2.5": None}  # Keeps track of current communicating person
+messages = {"10.0.2.15": [], "10.0.2.5": [] }
 
 
 # get a message for another client
@@ -104,6 +102,7 @@ def get_public_ip(addr):
         if k == addr:
             return v
     return None
+
 
 
 
