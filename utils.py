@@ -4,13 +4,13 @@ from scapy.all import *
 import time
 import socket
 import os
-import md5
+import hashlib
 
 SERVER_UDP_PORT = 5050  # Random port
 SERVER_UDP_IP = "128.199.177.106"  # prashant.at
 
-users = {"10.10.0.2": md5.new("pw1").digest(),
-         "10.10.0.3": md5.new("pw2").digest()}  # Keeps track of usernames and passwords. I know MD5 is bad!
+users = {"10.10.0.2": hashlib.md5.new("pw1").digest(),
+         "10.10.0.3": hashlib.md5.new("pw2").digest()}  # Keeps track of usernames and passwords. I know MD5 is bad!
 addresses = {"10.10.0.1": (SERVER_UDP_IP, SERVER_UDP_PORT), "10.10.0.2": None,
              "10.10.0.3": None}  # Keeps track of current communicating person
 messages = {"10.10.0.1": [], "10.10.0.2": [], "10.10.0.3": []}
