@@ -11,7 +11,7 @@ import utils
 import time
 from threading import Thread
 import signal
-import md5
+import hashlib
 from Crypto.Cipher import XOR
 
 
@@ -33,7 +33,7 @@ class TunnelClient(object):
         self._sock.bind((laddr, lport))
         self._raddr = raddr
         self._rport = rport
-        self._rpw = md5.new(rpw).digest()
+        self._rpw = hashlib.md5(rpw).digest()
         if self._rpw != utils.users[self._tun.addr]:
             print("Password doesn't match")
             sys.exit(0)

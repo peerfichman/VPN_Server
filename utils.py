@@ -14,6 +14,7 @@ addresses = {"10.0.2.15": (SERVER_UDP_IP, SERVER_UDP_PORT), "10.0.2.5": None}  #
 messages = {"10.0.2.15": [], "10.0.2.5": [] }
 
 
+
 # get a message for another client
 def receive_non_auth_message(data):
     packet = IP(data)
