@@ -12,7 +12,6 @@ import time
 from threading import Thread
 import signal
 import hashlib
-from Crypto.Cipher import XOR
 
 
 def signal_handler(signal, frame):
@@ -33,7 +32,7 @@ class TunnelClient(object):
         self._sock.bind((laddr, lport))
         self._raddr = raddr
         self._rport = rport
-        self._rpw = hashlib.md5(rpw).digest()
+        self._rpw = hashlib.md5(rpw.encode()).digest()
         if self._rpw != utils.users[self._tun.addr]:
             print("Password doesn't match")
             sys.exit(0)
@@ -119,7 +118,7 @@ def main():
                       help='set password with pw')
 
     tun_mtu = 1500
-    remote_addr = "128.199.177.106"
+    remote_addr = "10.0.2.15"
     remote_port = 5050
 
     parser.add_option('--local-addr', default='0.0.0.0', dest='laddr',

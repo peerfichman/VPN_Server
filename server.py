@@ -133,8 +133,8 @@ class TunnelServer(object):
 def main():
     tun_mtu = 1500
 
-    ptp_addr = "10.0.2.5"
-    ptp_dst = "10.0.2.5"
+    ptp_addr = "10.0.2.15"
+    ptp_dst = "10.0.2.15"
     ptp_mask = "255.255.255.0"
     sock_addr = "10.0.2.15"
     sock_port = 5050
