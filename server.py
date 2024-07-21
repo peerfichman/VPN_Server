@@ -108,6 +108,7 @@ class TunnelServer(object):
 
             if self._sock in w:
                 ip_pkt = IP(send_packet)
+                print(ip_pkt)
                 send_addr = utils.get_public_ip(ip_pkt.dst)
                 self._sock.sendto(send_packet, send_addr)
                 send_packet = ''
