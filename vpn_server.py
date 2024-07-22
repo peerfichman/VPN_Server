@@ -74,12 +74,11 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    tun.write(packet.raw)
+    tun.write(packet)
     response = tun.read(1024)
     print(response)
     if response:
         print("packet received response:")
-        response.show()
     else:
         print("packet received no response")
 
@@ -94,9 +93,9 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
-        packet = IP(data)
-        print("Constructed Scapy packet from raw data:")
-        packet.show()
+        # packet = IP(data)
+        # print("Constructed Scapy packet from raw data:")
+        # packet.show()
 
         # Forward the packet using Scapy and get the response
         response = forward_packet(packet)
@@ -147,7 +146,6 @@ def main():
     print(response)
     if response:
         print("ICMP test packet received response:")
-        response.show()
     else:
         print("ICMP test packet received no response")
 
