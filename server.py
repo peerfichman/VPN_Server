@@ -29,7 +29,7 @@ class TunnelServer(object):
 
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport):
 
-        self._tun = pytun.TunTapDevice("tun0", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+        self._tun = pytun.TunTapDevice("eran", flags=pytun.IFF_TUN | pytun.IsFF_NO_PI)
         self._tun.addr = taddr
         self._tun.dstaddr = tdstaddr
         self._tun.netmask = tmask

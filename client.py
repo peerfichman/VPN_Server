@@ -22,15 +22,14 @@ def signal_handler(signal, frame):
 class TunnelClient(object):
 
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport, raddr, rport, rpw):
-        self._tun = pytun.TunTapDevice("tun0", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+        self._tun = pytun.TunTapDevice("eran", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
         self._tun.addr = taddr
         self._tun.dstaddr = tdstaddr
         self._tun.netmask = tmask
         self._tun.mtu = tmtu
         self._tun.up()
-        self._sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW,socket.ntohs(0x0003))
+        self._sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock.bind((laddr, lport))
-        self._sock.setsockopt(socket.IPPROTO_IP, socket.IP_HDRINCL,1)
         self._raddr = raddr
         self._rport = rport
         self._rpw = rpw
