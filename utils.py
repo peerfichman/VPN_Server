@@ -68,7 +68,7 @@ def send_auth_packet(sock, username, pw):
     message = "username:" + username + ":" + pw + ":" + str(time.time())
 
     # amitcrypto.enc(sock, message, (SERVER_UDP_IP, 5050))
-    sock.sendto(message, (SERVER_UDP_IP, 5050))
+    sock.sendto(bytes(message, "utf-8"), (SERVER_UDP_IP, 5050))
     return
 
 
