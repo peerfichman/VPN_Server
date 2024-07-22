@@ -4,18 +4,19 @@ import os
 from scapy.all import *
 from scapy.layers.inet import IP, TCP, Ether
 import scapy.layers.http as http
-
+import tun
 load_dotenv()
 
 SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
+tun = tun.openTun(b"eran")
 
 
 def decapsulate_packet(packet):
     # Decapsulate the original packet to get the necessary layers
     # original_ip = packet[IP]
     # original_tcp = packet[TCP]
- # Test connectivity with an ICMP packet
+    # Test connectivity with an ICMP packet
     # Define the IP layer
     ip_layer = IP(
         src=SERVER_IP,  # Source IP
@@ -41,8 +42,10 @@ def decapsulate_packet(packet):
     new_packet = ip_layer / tcp_layer / http_payload
     new_packet.show()
     # Send the packet
-    response = sr1(new_packet, verbose=True)
-
+    #response = sr1(new_packet, verbose=True)
+    tun.write(new_packet.raw)
+    response = tun.read(1024)
+    print (response)
     if response:
         print("ICMP test packet received response:")
         response.show()
