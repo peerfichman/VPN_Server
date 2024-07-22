@@ -33,21 +33,21 @@ class TunnelClient(object):
         self._raddr = raddr
         self._rport = rport
         self._rpw = rpw
-        if self._rpw != utils.users[self._tun.addr]:
-            print("Password doesn't match")
-            sys.exit(0)
+        # if self._rpw != utils.users[self._tun.addr]:
+        #     print("Password doesn't match")
+        #     sys.exit(0)
         self._interval = 5  # 5 seconds is the timer interval
         self._time = 0
 
-    def every_five_seconds(self):
-        while True:
-            utils.send_auth_packet(self._sock, self._tun.addr, self._rpw)
-            time.sleep(5)
+    # def every_five_seconds(self):
+    #     while True:
+    #         utils.send_auth_packet(self._sock, self._tun.addr, self._rpw)
+    #         time.sleep(5)
 
     def run(self):
-        thread = Thread(target=self.every_five_seconds)
-        thread.daemon = True
-        thread.start()
+        # thread = Thread(target=self.every_five_seconds)
+        # thread.daemon = True
+        # thread.start()
         mtu = 1500
         r = [self._tun, self._sock];w = [];x = []
         data = ''
@@ -79,7 +79,7 @@ class TunnelClient(object):
                 if self._tun in w:
                     print('writing to tunnel')
                     print(data)
-                    self._tun.write(data)
+                    self._tun.write(b'data')
                     data = ''
                 if self._sock in w:
                     print('writing to socket')
