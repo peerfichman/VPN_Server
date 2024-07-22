@@ -58,6 +58,7 @@ class TunnelServer(object):
             if self._sock in r:
                 recv_packet, addr = self._sock.recvfrom(65535)
                 print("recived packet", recv_packet)
+                recv_packet = recv_packet.decode()
                 auth = utils.recv_auth(self._sock, addr, recv_packet)
                 print("auth value:", auth)
                 exists = utils.check_if_addr_exists(addr)
