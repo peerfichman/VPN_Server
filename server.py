@@ -29,7 +29,7 @@ class TunnelServer(object):
 
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport):
 
-        self._tun = pytun.TunTapDevice("leamit0", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+        self._tun = pytun.TunTapDevice("tun0", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
         self._tun.addr = taddr
         self._tun.dstaddr = tdstaddr
         self._tun.netmask = tmask
@@ -69,7 +69,7 @@ class TunnelServer(object):
                         if clientIP:
                             # get message queue and send one by one
                             recv_packets = utils.get_messages_for_client(clientIP.src)
-                            if recv_packets != None and (addr[0] != SERVER_UDP_IP):
+                            if recv_packets != None and (addr[0] != utils.SERVER_UDP_IP):
                                 for send_pkt in recv_packets:
                                     self._sock.sendto(send_pkt, addr)
                                 utils.clear_messages(addr)
@@ -133,8 +133,8 @@ class TunnelServer(object):
 def main():
     tun_mtu = 1500
 
-    ptp_addr = "10.0.2.15"
-    ptp_dst = "10.0.2.15"
+    ptp_addr = "10.10.0.1"
+    ptp_dst = "10.10.0.1"
     ptp_mask = "255.255.255.0"
     sock_addr = "10.0.2.15"
     sock_port = 5050
