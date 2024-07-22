@@ -19,7 +19,7 @@ import errno
 import pytun
 import utils
 from scapy.all import IP, UDP, Raw
-
+import tun
 
 def swap_src_and_dst(pkt, layer):
     pkt[layer].dst, pkt[layer].src = pkt[layer].src, pkt[layer].dst
@@ -29,7 +29,7 @@ class TunnelServer(object):
 
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport):
 
-        self._tun = pytun.TunTapDevice("eran", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+        self._tun = tun.openTun(b"eran")
         self._tun.addr = taddr
         self._tun.dstaddr = tdstaddr
         self._tun.netmask = tmask

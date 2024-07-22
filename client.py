@@ -74,12 +74,12 @@ class TunnelClient(object):
                     # data = aesobj.decrypt(data)
                     # data = aesobj.decrypt(data)
                     print('received ' + str(data))
-                    if addr[0] != self._raddr or addr[1] != self._rport:
-                        data = ''  # drop packet
+                    #if addr[0] != self._raddr or addr[1] != self._rport:
+                     #   data = ''  # drop packet
                 if self._tun in w:
                     print('writing to tunnel')
                     print(data)
-                    self._tun.write(data.decode())
+                    self._tun.write(bytes(data))
                     data = ''
                 if self._sock in w:
                     print('writing to socket')
