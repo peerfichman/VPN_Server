@@ -38,7 +38,7 @@ def decapsulate_packet(new_packet):
     
 
     # Combine the layers into a single packet
-    new_packet = ip_layer / tcp_layer / packet[TCP].payload
+    new_packet = ip_layer / tcp_layer / new_packet[TCP].payload
     new_packet.show()
     # Send the packet
     tun.write(bytes(new_packet))
