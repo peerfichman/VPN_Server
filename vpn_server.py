@@ -98,7 +98,7 @@ def handle_client(client_socket, addr):
         # packet.show()
 
         # Forward the packet using Scapy and get the response
-        response = forward_packet(packet)
+        response = forward_packet(data)
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
