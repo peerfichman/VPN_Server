@@ -56,6 +56,7 @@ def clear_messages(addr):
 
 # Server authenticates user
 def validate_user(username, pw):
+    print("in valid user username:", username, "pw:", pw)
     if users[username] == pw:
         return True
     else:

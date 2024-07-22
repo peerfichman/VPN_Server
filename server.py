@@ -59,8 +59,10 @@ class TunnelServer(object):
                 recv_packet, addr = self._sock.recvfrom(65535)
                 print("recived packet", recv_packet)
                 auth = utils.recv_auth(self._sock, addr, recv_packet)
+                print("auth value:", auth)
                 exists = utils.check_if_addr_exists(addr)
-
+                print("exists:", exists)
+                print("adress existst:", addr)
                 if exists != None:
                     # first get client address
                     clientIP = IP(recv_packet)
