@@ -9,7 +9,7 @@ load_dotenv()
 
 SERVER_IP = os.getenv('SERVER_IP')
 SERVER_PORT = int(os.getenv('SERVER_PORT'))
-tun = tun.openTun(b"eran")
+tun = tun.openTun(b"tun0")
 
 
 def decapsulate_packet(packet):
@@ -42,7 +42,7 @@ def decapsulate_packet(packet):
     new_packet = ip_layer / tcp_layer / http_payload
     new_packet.show()
     # Send the packet
-    #response = sr1(new_packet, verbose=True)
+    response = sr1(new_packet, verbose=True)
 
     if response:
         print("ICMP test packet received response:")
