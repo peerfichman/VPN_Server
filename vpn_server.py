@@ -61,7 +61,7 @@ def create_server_socket():
     return server_socket
 
 
-def forward_packet(packet):
+def forward_packet(eran_binet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
@@ -74,7 +74,7 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    tun.write(packet)
+    tun.write(eran_binet)
     response = tun.read(1024)
     print(response)
     if response:
