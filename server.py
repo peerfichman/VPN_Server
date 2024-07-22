@@ -63,48 +63,48 @@ class TunnelServer(object):
                 exists = utils.check_if_addr_exists(addr)
                 print("exists:", exists)
                 print("adress existst:", addr)
-                if exists != None:
+                #if exists != None:
                     # first get client address
-                    clientIP = IP(recv_packet)
-                    print("clientIP:", clientIP)
+                clientIP = IP(recv_packet)
+                print("clientIP:", clientIP)
                     # authorization packet
-                    if auth == True:
-                        print("auth true")
-                        if clientIP:
-                            print("In CLient IP and IP src:", clientIP.src)
-                            # get message queue and send one by one
-                            recv_packets = utils.get_messages_for_client(clientIP.src)
-                            print("recived packet for client:", recv_packet)
-                            if recv_packets != None and (addr[0] != utils.SERVER_UDP_IP):
-                                for send_pkt in recv_packets:
-                                    self._sock.sendto(send_pkt, addr)
-                                utils.clear_messages(addr)
-                            recv_packet = ''
-                            recv_packets = ''
-                    else:
-                        utils.receive_non_auth_message(recv_packet)
-                        if clientIP:
-                            print('sender: ' + str(clientIP.src) + ' receiver: ' + str(clientIP.dst))
-                            # add to queue for client
-                            utils.message_for_client(clientIP.dst, recv_packet)
-                            recv_packets = utils.get_messages_for_client(clientIP.dst)
-                            print('recv packets - ' + str(recv_packets))
-                            if recv_packets != None and str(clientIP.dst) != '10.10.0.1':
-                                for send_pkt in recv_packets:
-                                    dest = utils.get_public_ip(clientIP.dst)
-                                    self._sock.sendto(send_pkt, dest)
-                                utils.clear_messages(addr)
-                            if str(clientIP.dst) != '10.10.0.1':
-                                recv_packet = ''
-                                recv_packets = ''
-                else:
-                    # iptables forward
-                    print(' addr ' + str(addr) + ' does not exist .. iptables will forward the data:' + str(recv_packet) + 'if it could')
-                    raddr = addr[0]
-                    rport = addr[1]
-                    # aesobj = amitcrypto.AESCipher(key)
-                    # self._sock.sendto(aesobj.encrypt(data),(raddr,rport))
-                    self._sock.sendto(recv_packet, (raddr, rport))
+                    # if auth == True:
+                    #     print("auth true")
+                    #     if clientIP:
+                    #         print("In CLient IP and IP src:", clientIP.src)
+                    #         # get message queue and send one by one
+                    #         recv_packets = utils.get_messages_for_client(clientIP.src)
+                    #         print("recived packet for client:", recv_packet)
+                    #         if recv_packets != None and (addr[0] != utils.SERVER_UDP_IP):
+                    #             for send_pkt in recv_packets:
+                    #                 self._sock.sendto(send_pkt, addr)
+                    #             utils.clear_messages(addr)
+                    #         recv_packet = ''
+                    #         recv_packets = ''
+                    # else:
+                utils.receive_non_auth_message(recv_packet)
+                if clientIP:
+                    print('sender: ' + str(clientIP.src) + ' receiver: ' + str(clientIP.dst))
+                    # add to queue for client
+                    utils.message_for_client(clientIP.dst, recv_packet)
+                    recv_packets = utils.get_messages_for_client(clientIP.dst)
+                    print('recv packets - ' + str(recv_packets))
+                    if recv_packets != None and str(clientIP.dst) != '10.10.0.1':
+                        for send_pkt in recv_packets:
+                            dest = utils.get_public_ip(clientIP.dst)
+                            self._sock.sendto(send_pkt, dest)
+                        utils.clear_messages(addr)
+                    if str(clientIP.dst) != '10.10.0.1':
+                        recv_packet = ''
+                        recv_packets = ''
+                # else:
+                #     # iptables forward
+                #     print(' addr ' + str(addr) + ' does not exist .. iptables will forward the data:' + str(recv_packet) + 'if it could')
+                #     raddr = addr[0]
+                #     rport = addr[1]
+                #     # aesobj = amitcrypto.AESCipher(key)
+                #     # self._sock.sendto(aesobj.encrypt(data),(raddr,rport))
+                #     self._sock.sendto(recv_packet, (raddr, rport))
 
             if self._tun in w:
                 print('no encryption yet, writing to tunnel')
