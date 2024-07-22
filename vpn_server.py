@@ -43,9 +43,7 @@ def decapsulate_packet(packet):
     new_packet.show()
     # Send the packet
     #response = sr1(new_packet, verbose=True)
-    tun.write(new_packet.raw)
-    response = tun.read(1024)
-    print (response)
+
     if response:
         print("ICMP test packet received response:")
         response.show()
@@ -76,7 +74,9 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    response = sr1(packet)
+    tun.write(packet.raw)
+    response = tun.read(1024)
+    print(response)
     if response:
         print("packet received response:")
         response.show()
@@ -142,8 +142,9 @@ def main():
     packet.show()
     
     #Send the packet
-    response = sr1(packet)
-
+    tun.write(packet.raw)
+    response = tun.read(1024)
+    print(response)
     if response:
         print("ICMP test packet received response:")
         response.show()

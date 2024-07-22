@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ade9d79-a0b6-44d9-a918-86df14498c01" name="Changes" comment="thread">
-      <change afterPath="$PROJECT_DIR$/tun.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vpn_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/vpn_server.py" afterDir="false" />
     </list>
@@ -71,7 +70,7 @@
       <workItem from="1721473326761" duration="766000" />
       <workItem from="1721474112711" duration="12320000" />
       <workItem from="1721654078029" duration="154000" />
-      <workItem from="1721654260474" duration="1084000" />
+      <workItem from="1721654260474" duration="1377000" />
     </task>
     <task id="LOCAL-00001" summary="thread">
       <created>1719562170016</created>
