@@ -12,10 +12,10 @@ SERVER_PORT = int(os.getenv('SERVER_PORT'))
 tun = tun.openTun(b"tun0")
 
 
-def decapsulate_packet(packet):
+def decapsulate_packet(new_packet):
     # Decapsulate the original packet to get the necessary layers
-    # original_ip = packet[IP]
-    # original_tcp = packet[TCP]
+    original_ip = new_packet[IP].src
+    original_tcp = new_packet[TCP].sport
     # Test connectivity with an ICMP packet
     # Define the IP layer
     ip_layer = IP(
@@ -36,14 +36,13 @@ def decapsulate_packet(packet):
         dataofs=8  # Data offset
     )
     
-    http_payload = "GET / HTTP/1.1\r\nHost: 148.66.138.145\r\nConnection: close\r\n\r\n"
 
     # Combine the layers into a single packet
-    new_packet = ip_layer / tcp_layer / http_payload
+    new_packet = ip_layer / tcp_layer / packet[TCP].payload
     new_packet.show()
     # Send the packet
-    response = sr1(new_packet, verbose=True)
-
+    tun.write(bytes(new_packet))
+    response = tun.read(1024)
     if response:
         print("ICMP test packet received response:")
         response.show()
@@ -65,7 +64,7 @@ def forward_packet(eran_binet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    #response = decapsulate_packet(packet)
+    response = decapsulate_packet(packet)
     
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
@@ -74,8 +73,8 @@ def forward_packet(eran_binet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    tun.write(eran_binet)
-    response = tun.read(1024)
+    # tun.write(eran_binet)
+    # response = tun.read(1024)
     print(response)
     if response:
         print("packet received response:")
@@ -92,13 +91,13 @@ def handle_client(client_socket, addr):
         data = client_socket.recv(4096)
         print(f"Received raw data: {data}")
 
-        # Convert raw data to a Scapy IP packet
-        # packet = IP(data)
-        # print("Constructed Scapy packet from raw data:")
-        # packet.show()
+        #Convert raw data to a Scapy IP packet
+        packet = IP(data)
+        print("Constructed Scapy packet from raw data:")
+        packet.show()
 
         # Forward the packet using Scapy and get the response
-        response = forward_packet(data)
+        response = forward_packet(packet)
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
