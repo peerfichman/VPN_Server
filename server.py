@@ -36,7 +36,7 @@ class TunnelServer(object):
         self._tun.mtu = tmtu
         self._tun.up()
         self._sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
-        self._sock.bind((laddr, lport))
+        self._sock.bind(("enp0s3", 0))
 
     def run(self):
         mtu = self._tun.mtu
