@@ -64,7 +64,7 @@ def forward_packet(eran_binet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    response = decapsulate_packet(packet)
+    response = decapsulate_packet(eran_binet)
     
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
@@ -92,12 +92,12 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         #Convert raw data to a Scapy IP packet
-        packet = IP(data)
+        rec_packet = IP(data)
         print("Constructed Scapy packet from raw data:")
-        packet.show()
+        rec_packet.show()
 
         # Forward the packet using Scapy and get the response
-        response = forward_packet(packet)
+        response = forward_packet(rec_packet)
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
