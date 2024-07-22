@@ -141,13 +141,13 @@ def main():
     packet.show()
     
     #Send the packet
-    tun.write(b'E\x00\x00,\x00\x00@\x00&\x06\xda\xc4"\xc2\x95C\xc0\x00\x02\x02\x00Px\x0cyvL\x84\xf4p\x98\x8c`\x12\xfb\xe0W\xb5\x00\x00\x02\x04\x04\xd8')
-    response = tun.read(1024)
-    print(response)
-    if response:
-        print("ICMP test packet received response:")
-    else:
-        print("ICMP test packet received no response")
+    # tun.write(b'E\x00\x00,\x00\x00@\x00&\x06\xda\xc4"\xc2\x95C\xc0\x00\x02\x02\x00Px\x0cyvL\x84\xf4p\x98\x8c`\x12\xfb\xe0W\xb5\x00\x00\x02\x04\x04\xd8')
+    # response = tun.read(1024)
+    # print(response)
+    # if response:
+    #     print("ICMP test packet received response:")
+    # else:
+    #     print("ICMP test packet received no response")
 
     while True:
         client_socket, addr = server_socket.accept()
