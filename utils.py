@@ -11,7 +11,7 @@ SERVER_UDP_IP = "10.0.2.15"  # prashant.at
 
 users = {"10.10.0.2": 'pw1' } # Keeps track of usernames and passwords. I know MD5 is bad!
 addresses = {"10.10.0.2": ("10.0.2.5", 12000)}  # Keeps track of current communicating person
-messages = {"10.0.0.1": [], "10.0.0.2": [] }
+messages = {"10.0.0.1": [], "10.10.0.2": [] }
 
 
 

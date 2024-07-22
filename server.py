@@ -66,12 +66,15 @@ class TunnelServer(object):
                 if exists != None:
                     # first get client address
                     clientIP = IP(recv_packet)
+                    print("clientIP:", clientIP)
                     # authorization packet
                     if auth == True:
                         print("auth true")
                         if clientIP:
+                            print("In CLient IP and IP src:", clientIP.src)
                             # get message queue and send one by one
                             recv_packets = utils.get_messages_for_client(clientIP.src)
+                            print("recived packet for client:", recv_packet)
                             if recv_packets != None and (addr[0] != utils.SERVER_UDP_IP):
                                 for send_pkt in recv_packets:
                                     self._sock.sendto(send_pkt, addr)
