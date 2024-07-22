@@ -66,6 +66,7 @@ class TunnelServer(object):
                     clientIP = IP(recv_packet)
                     # authorization packet
                     if auth == True:
+                        print("auth true")
                         if clientIP:
                             # get message queue and send one by one
                             recv_packets = utils.get_messages_for_client(clientIP.src)
