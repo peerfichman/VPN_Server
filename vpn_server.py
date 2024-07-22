@@ -64,7 +64,7 @@ def forward_packet(packet):
     """Forward a packet using Scapy and return the response."""
 
     # Change the source IP address to the VPN server's IP
-    response = decapsulate_packet(packet)
+    #response = decapsulate_packet(packet)
     
     # Send the packet and wait for a response
     # ans, unans = sr(new_packet, iface='enp0s3')
@@ -73,20 +73,14 @@ def forward_packet(packet):
     # return ans if len(ans) > 0 else b""
     
     # Send the packet
-    # response = sr1(new_packet)
-    # if response:
-    #     print("packet received response:")
-    #     response.show()
-    # else:
-    #     print("packet received no response")
+    response = sr1(packet)
+    if response:
+        print("packet received response:")
+        response.show()
+    else:
+        print("packet received no response")
 
     return response if response else b""
-
-def http_request():
-    client = http.HTTP_Client()
-    resp = client.request("http://148.66.138.145:80")
-    print(resp)
-    client.close()
 
 def handle_client(client_socket, addr):
     print(f"Connection from {addr} has been established.")
@@ -97,7 +91,7 @@ def handle_client(client_socket, addr):
         print(f"Received raw data: {data}")
 
         # Convert raw data to a Scapy IP packet
-        packet = Ether(data)
+        packet = IP(data)
         print("Constructed Scapy packet from raw data:")
         packet.show()
 
@@ -106,8 +100,8 @@ def handle_client(client_socket, addr):
         print(f"Sent Response packets: {response}")
 
         # Send the response back to the client
-        [client_socket.sendall(res[1].build()) for res in response]
-        # client_socket.sendall(response)
+        #[client_socket.sendall(res[1].build()) for res in response]
+        client_socket.sendall(response)
 
     except Exception as e:
         print(f"Error handling client: {e}, {e.with_traceback()}")
@@ -144,16 +138,14 @@ def main():
     packet = ip_layer / tcp_layer / http_payload
     packet.show()
     
-    # Send the packet
-    # response = sr1(packet)
+    #Send the packet
+    response = sr1(packet)
 
-    # if response:
-    #     print("ICMP test packet received response:")
-    #     response.show()
-    # else:
-    #     print("ICMP test packet received no response")
-
-    http_request()
+    if response:
+        print("ICMP test packet received response:")
+        response.show()
+    else:
+        print("ICMP test packet received no response")
 
     while True:
         client_socket, addr = server_socket.accept()
