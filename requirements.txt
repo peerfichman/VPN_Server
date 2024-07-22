@@ -1,0 +1,5 @@
+psutil==5.9.7
+pydivert==2.1.0
+python-dotenv==1.0.1
+python_pytuntap==1.0.5
+scapy==2.5.0

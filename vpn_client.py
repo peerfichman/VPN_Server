@@ -33,6 +33,7 @@ def main():
     # with pydivert.WinDivert("tcp.DstPort == 80 or tcp.DstPort == 443") as w:
     with pydivert.WinDivert("ip.DstAddr == 148.66.138.145") as w:
         for packet in w:
+            print(packet)
             data = packet.raw
             interface = packet.interface
             response = send_packet(data)
