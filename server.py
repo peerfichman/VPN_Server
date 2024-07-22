@@ -30,11 +30,11 @@ class TunnelServer(object):
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport):
 
         self._tun = tun.openTun(b"eran")
-        self._tun.addr = taddr
-        self._tun.dstaddr = tdstaddr
-        self._tun.netmask = tmask
-        self._tun.mtu = tmtu
-        self._tun.up()
+        # self._tun.addr = taddr
+        # self._tun.dstaddr = tdstaddr
+        # self._tun.netmask = tmask
+        # self._tun.mtu = tmtu
+        # self._tun.up()
         self._sock = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
         self._sock.bind(("enp0s3", 0))
 
