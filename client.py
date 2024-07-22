@@ -79,7 +79,7 @@ class TunnelClient(object):
                 if self._tun in w:
                     print('writing to tunnel')
                     print(data)
-                    self._tun.write(data)
+                    self._tun.write(str(data))
                     data = ''
                 if self._sock in w:
                     print('writing to socket')
