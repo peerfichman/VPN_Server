@@ -12,7 +12,7 @@ import time
 from threading import Thread
 import signal
 import hashlib
-
+import tun
 
 def signal_handler(signal, frame):
     print('You pressed Ctrl+C!')
@@ -22,7 +22,7 @@ def signal_handler(signal, frame):
 class TunnelClient(object):
 
     def __init__(self, taddr, tdstaddr, tmask, tmtu, laddr, lport, raddr, rport, rpw):
-        self._tun = pytun.TunTapDevice("eran", flags=pytun.IFF_TUN | pytun.IFF_NO_PI)
+        self._tun = tun.openTun(b"eran")
         self._tun.addr = taddr
         self._tun.dstaddr = tdstaddr
         self._tun.netmask = tmask
@@ -79,7 +79,7 @@ class TunnelClient(object):
                 if self._tun in w:
                     print('writing to tunnel')
                     print(data)
-                    self._tun.write(bytes(data))
+                    self._tun.write(data)
                     data = ''
                 if self._sock in w:
                     print('writing to socket')
