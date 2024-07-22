@@ -80,9 +80,11 @@ def recv_auth(sock, addr, encmessage):
     message = encmessage
     # message = amitcrypto.dec(sock, encmessage, addr)
     # print "Recv auth method entered"
+    print("message before try:", message)
     try:
         username = message.split(':')[1]
         pw = message.split(':')[2]
+
         # print username
         # print pw, len(pw)
         # print users[username], len(users[username])
@@ -94,7 +96,8 @@ def recv_auth(sock, addr, encmessage):
             return True
         else:
             return False
-    except:
+    except Exception as e:
+        print("Error:", e)
         return False
 
 
