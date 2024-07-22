@@ -78,7 +78,7 @@ def send_auth_packet(sock, username, pw):
 def recv_auth(sock, addr, encmessage):
     # xor = XOR.XORCipher(key)
     # message = xor.decrypt(encmessage)
-    message = encmessage.decode()
+    message = encmessage
     # message = amitcrypto.dec(sock, encmessage, addr)
     # print "Recv auth method entered"
     print("message before try:", message)
