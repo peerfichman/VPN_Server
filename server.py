@@ -39,7 +39,7 @@ class TunnelServer(object):
         self._sock.bind(("enp0s3", 0))
 
     def run(self):
-        mtu = self._tun.mtu
+        mtu = 1500
         r = [self._tun, self._sock];
         w = [];
         x = []

@@ -48,7 +48,7 @@ class TunnelClient(object):
         thread = Thread(target=self.every_five_seconds)
         thread.daemon = True
         thread.start()
-        mtu = self._tun.mtu
+        mtu = 1500
         r = [self._tun, self._sock];w = [];x = []
         data = ''
         to_sock = ''
