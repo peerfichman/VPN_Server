@@ -36,7 +36,7 @@ class MySocket:
         
 
     def run(self):
-        self.server_socket.settimeout(2)
+        self.server_socket.settimeout(5)
         while True:
             # print("Ready to serve...")
             (clientSocket, client_address) = self.cleint_socket.accept()
@@ -51,9 +51,9 @@ class MySocket:
                 while 1:
                     print("waiting for server response")
                     data = self.server_socket.recv(self.max_request_len)
-                    data = self.cipher.decrypt(data)
 
                     if (len(data) > 0):
+                        data = self.cipher.decrypt(data)
                         print("data received from server:", data)
                         clientSocket.send(data)
                         print("data sent to browser")
