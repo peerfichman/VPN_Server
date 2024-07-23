@@ -72,10 +72,12 @@ class MySocket:
                 while 1:
                     # receive data from web server
                     data = s.recv(config['MAX_REQUEST_LEN'])
-
+                    print("data", data)
                     if (len(data) > 0):
                         clientSocket.send(data) # send to browser/client
+                        print("data sent")
                     else:
+                        print("no data")
                         break
             except socket.error as e:
                 print("Socket error", e)
