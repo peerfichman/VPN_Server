@@ -29,18 +29,18 @@ class MySocket:
             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
             print("request", request)
             
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-            try:
-                s.connect((config['HOST_NAME'], config['SERVER_PORT']))
-                s.sendall(request)
-                print("sent all")
+            # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+            # try:
+            #     s.connect((config['HOST_NAME'], config['SERVER_PORT']))
+            #     s.sendall(request)
+            #     print("sent all")
                 
-                data = s.recv(config['MAX_REQUEST_LEN'])
-                print("recieved")
-                print(data)
-                clientSocket.send(data) # send to browser/client
-                print("sent to browser")
-                s.close()
+            #     data = s.recv(config['MAX_REQUEST_LEN'])
+            #     print("recieved")
+            #     print(data)
+            #     clientSocket.send(data) # send to browser/client
+            #     print("sent to browser")
+            #     s.close()
 
 
                 # while 1:
@@ -57,10 +57,10 @@ class MySocket:
                 #         s.close()
                 #         break
 
-            except socket.error as e:
-                print("Socket error", e)
-                print("close error")
-                s.close()
+            # except socket.error as e:
+            #     print("Socket error", e)
+            #     print("close error")
+            #     s.close()
 
 
 
