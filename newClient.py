@@ -7,13 +7,13 @@ from dotenv import load_dotenv
 load_dotenv("./.env")
 
 class MySocket:
-    max_request_len = os.getenv('MAX_REQUEST_LEN')
+    max_request_len = int(os.getenv('MAX_REQUEST_LEN'))
     
     def __init__(self):
         encryption_key = os.getenv('FERNET_KEY')
         host_name = os.getenv('HOST_NAME')
-        server_port = os.getenv('SERVER_PORT')
-        client_port = os.getenv('CLIENT_PORT')
+        server_port = int(os.getenv('SERVER_PORT'))
+        client_port = int(os.getenv('CLIENT_PORT'))
         self.totp = pyotp.TOTP('base32secret3232')
         self.cipher = Fernet(encryption_key.encode())
 

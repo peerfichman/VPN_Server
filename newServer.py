@@ -9,19 +9,19 @@ load_dotenv("./.env")
 FERNET_KEY='OOQUMojR77nun9bM9PFi6YIe2-7z1z9AVlb9irfYGT4='
 
 class MySocket:
-    max_request_len = os.getenv('MAX_REQUEST_LEN')
+    max_request_len = int(os.getenv('MAX_REQUEST_LEN'))
 
     def __init__(self):
         encryption_key = os.getenv('FERNET_KEY')
         host_name = os.getenv('HOST_NAME')
-        server_port = os.getenv('SERVER_PORT')
+        server_port = int(os.getenv('SERVER_PORT'))
         
         self.totp = pyotp.TOTP('base32secret3232')        
         self.cipher = Fernet(encryption_key)
 
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.cleint_socket.bind((host_name, int(server_port)))
+        self.cleint_socket.bind((host_name, server_port))
         self.cleint_socket.listen(10)
 
     def run(self):
