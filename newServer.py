@@ -2,14 +2,14 @@ import signal
 import socket
 
 config = {
-    'HOST_NAME': '127.0.0.1',
+    'HOST_NAME': '10.10.0.5',
     'CLIENT_PORT': 8888,
     'SERVER_PORT': 9999,
     'MAX_REQUEST_LEN': 65536
     }
-
+ 
 class MySocket:
-    
+     
     def __init__(self, config):
         # Create a TCP socket
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
