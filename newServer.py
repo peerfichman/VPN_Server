@@ -6,8 +6,6 @@ import os
 
 load_dotenv("./.env")
  
-TOTP_KEY = 'base32secret3232'
-
 class MySocket:
     max_request_len = int(os.getenv('MAX_REQUEST_LEN'))
 
@@ -15,7 +13,7 @@ class MySocket:
         encryption_key = os.getenv('FERNET_KEY')
         host_name = os.getenv('HOST_NAME')
         server_port = int(os.getenv('SERVER_PORT'))
-        totp_key = int(os.getenv('SERVER_PORT'))
+        totp_key = int(os.getenv('TOTP_KEY'))
         
         self.totp = pyotp.TOTP(totp_key)        
         self.cipher = Fernet(encryption_key)
