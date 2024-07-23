@@ -44,12 +44,13 @@ class MySocket:
             
         while True:
             request = clientSocket.recv(self.max_request_len) 
+            if len(request) == 0:
+                continue
+
             print("request_before_decription", request)
             request = self.cipher.decrypt(request)
             print("request", request)
             
-            if len(request) == 0:
-                continue
 
             # parse the first line
             first_line = request.split(b'\n')[0]
