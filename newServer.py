@@ -20,12 +20,11 @@ class MySocket:
         self.cleint_socket.listen(10) # become a server socket
 
     def run(self):
+        # Establish the connection
+        print("Ready to serve...")
+        (clientSocket, client_address) = self.cleint_socket.accept() 
+        print(clientSocket, client_address)
         while True:
-            # Establish the connection
-            print("Ready to serve...")
-            (clientSocket, client_address) = self.cleint_socket.accept() 
-            print(clientSocket, client_address)
-
             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
             print("request", request)
             
