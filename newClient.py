@@ -42,6 +42,7 @@ class MySocket:
             # print("Ready to serve...")
             (clientSocket, client_address) = self.cleint_socket.accept()
             print(clientSocket, client_address)
+
             print("wait for browser")
             request = clientSocket.recv(self.max_request_len)
             if (len(request) > 0):
@@ -65,6 +66,44 @@ class MySocket:
                         break
             except socket.error as e:
                 print("Socket error", e)
+
+
+#             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
+#             print("request", request)
+            
+            # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+            # try:
+            #     s.connect((config['HOST_NAME'], config['SERVER_PORT']))
+            #     s.sendall(request)
+            #     print("sent all")
+                
+            #     data = s.recv(config['MAX_REQUEST_LEN'])
+            #     print("recieved")
+            #     print(data)
+            #     clientSocket.send(data) # send to browser/client
+            #     print("sent to browser")
+            #     s.close()
+
+
+                # while 1:
+                #     # receive data from web server
+                #     data = s.recv(config['MAX_REQUEST_LEN'])
+                #     print("recieved")
+                #     print(data)
+
+                #     if (len(data) > 0):
+                #         clientSocket.send(data) # send to browser/client
+                #         print("sent to browser")
+                #     else:
+                #         print("close else")
+                #         s.close()
+                #         break
+
+            # except socket.error as e:
+            #     print("Socket error", e)
+            #     print("close error")
+            #     s.close()
+
 
 
     # def __init__(self, config):

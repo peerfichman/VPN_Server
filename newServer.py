@@ -4,8 +4,10 @@ from cryptography.fernet import Fernet
 from dotenv import load_dotenv
 import os
 
+
 load_dotenv("./.env")
  
+
 class MySocket:
     max_request_len = int(os.getenv('MAX_REQUEST_LEN'))
 
