@@ -26,7 +26,9 @@ class MySocket:
         (clientSocket, client_address) = self.cleint_socket.accept()
         print(clientSocket, client_address)
 
-        verify_totp = clientSocket.recv(1024)
+        print("TOTP", self.totp.now())
+        verify_totp = clientSocket.recv(1024).decode('utf-8')
+        print("verify_totp", verify_totp)
         if (not self.totp.verify(verify_totp)):
             print("Invalid TOTP")
             clientSocket.close()

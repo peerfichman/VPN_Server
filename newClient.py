@@ -1,5 +1,6 @@
 import signal
 import socket
+import pyotp
 
 config = {
     'HOST_NAME': '127.0.0.1',
@@ -11,6 +12,7 @@ config = {
 
 class MySocket:
     def __init__(self):
+        self.totp = pyotp.TOTP('base32secret3232')
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Re-use the socket
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -20,6 +22,9 @@ class MySocket:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
+        b = bytes(self.totp.now(), encoding='utf-8')
+        print("sending totp", b)
+        self.server_socket.send(b)
         self.server_socket.settimeout(2)
     def run(self):
         while True:
