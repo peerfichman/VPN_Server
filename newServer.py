@@ -82,7 +82,6 @@ class MySocket:
                 print("Socket error", e)
 
 
-
 x = MySocket(config)
 
 x.run()
