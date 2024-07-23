@@ -1,45 +1,54 @@
-import signal
+import os
 import socket
 import pyotp
+from cryptography.fernet import Fernet
+from dotenv import load_dotenv
 
-config = {
-    'HOST_NAME': '127.0.0.1',
-    'CLIENT_PORT': 8888,
-    'SERVER_PORT': 9999,
-    'MAX_REQUEST_LEN': 65536
-}
-
+load_dotenv("./.env")
 
 class MySocket:
+    max_request_len = os.getenv('MAX_REQUEST_LEN')
+    
     def __init__(self):
+        encryption_key = os.getenv('FERNET_KEY')
+        host_name = os.getenv('HOST_NAME')
+        server_port = os.getenv('SERVER_PORT')
+        client_port = os.getenv('CLIENT_PORT')
+
         self.totp = pyotp.TOTP('base32secret3232')
+        self.cipher = Fernet(encryption_key)
+
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Re-use the socket
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # bind the socket to a public host, and a port
-        self.cleint_socket.bind((config['HOST_NAME'], config['CLIENT_PORT']))
+
+        self.cleint_socket.bind((host_name, int(client_port)))
         self.cleint_socket.listen(10)  # become a server socket
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
-        b = bytes(self.totp.now(), encoding='utf-8')
-        print("sending totp", b)
-        self.server_socket.send(b)
-        self.server_socket.settimeout(2)
+        self.server_socket.connect((host_name, int(server_port)))
+
+        token = bytes(self.totp.now(), encoding='utf-8')
+        encrypted_token = self.cipher.encrypt(token)
+        print("sending totp", encrypted_token)
+
+        self.server_socket.send(encrypted_token)
+        
+
     def run(self):
+        self.server_socket.settimeout(2)
         while True:
             # print("Ready to serve...")
             (clientSocket, client_address) = self.cleint_socket.accept()
             print(clientSocket, client_address)
             print("wait for browser")
-            request = clientSocket.recv(config['MAX_REQUEST_LEN'])
+            request = clientSocket.recv(self.max_request_len)
             print("request", request)
             print("sending request to server")
             try:
                 self.server_socket.send(request)
                 while 1:
                     print("waiting for server response")
-                    data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
+                    data = self.server_socket.recv(self.max_request_len)
                     if (len(data) > 0):
                         print("data received from server:", data)
                         clientSocket.send(data)

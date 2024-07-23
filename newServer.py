@@ -1,23 +1,33 @@
 import socket
 import pyotp
+from cryptography.fernet import Fernet
+from dotenv import load_dotenv
+import os
 
-config = {
-    'HOST_NAME': '10.10.0.5',
-    'CLIENT_PORT': 8888,
-    'SERVER_PORT': 9999,
-    'MAX_REQUEST_LEN': 65536
-    }
+load_dotenv("./.env")
  
+FERNET_KEY = b'PZRDgn6RszZSOmPrU-FuL1ZT5KpPYN5BNlRo4s4_gTw='
+HOST_NAME='10.10.0.5'
+SERVER_PORT=9999
+MAX_REQUEST_LEN=65536
+
 class MySocket:
-     
-    def __init__(self, config):
-        self.totp = pyotp.TOTP('base32secret3232')
+    max_request_len = os.getenv('MAX_REQUEST_LEN')
+
+    def __init__(self):
+        encryption_key = os.getenv('FERNET_KEY')
+        host_name = os.getenv('HOST_NAME')
+        server_port = os.getenv('SERVER_PORT')
+        
+        self.totp = pyotp.TOTP('base32secret3232')        
+        self.cipher = Fernet(encryption_key)
+
         # Create a TCP socket
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Re-use the socket
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # bind the socket to a public host, and a port   
-        self.cleint_socket.bind((config['HOST_NAME'], config['SERVER_PORT']))
+        self.cleint_socket.bind((host_name, server_port))
         self.cleint_socket.listen(10) # become a server socket
 
     def run(self):
@@ -26,16 +36,18 @@ class MySocket:
         (clientSocket, client_address) = self.cleint_socket.accept()
         print(clientSocket, client_address)
 
-        print("TOTP", self.totp.now())
         verify_totp = clientSocket.recv(1024).decode('utf-8')
-        print("verify_totp", verify_totp)
-        if (not self.totp.verify(verify_totp)):
+        print("before decryption", verify_totp)
+        decrypted_data = self.cipher.decrypt(verify_totp)
+        print("verify_totp", decrypted_data)
+
+        if (not self.totp.verify(decrypted_data)):
             print("Invalid TOTP")
             clientSocket.close()
             return
             
         while True:
-            request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
+            request = clientSocket.recv(self.max_request_len) 
             print("request", request)
             
             if len(request) == 0:
@@ -84,7 +96,7 @@ class MySocket:
                 s.sendall(request)
                 while 1:
                     # receive data from web server
-                    data = s.recv(config['MAX_REQUEST_LEN'])
+                    data = s.recv(self.max_request_len)
                     print("data", data)
                     clientSocket.send(data) # send to browser/client
                     if (len(data) > 0):
@@ -96,6 +108,6 @@ class MySocket:
                 print("Socket error", e)
 
 
-x = MySocket(config)
+x = MySocket()
 
 x.run()
