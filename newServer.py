@@ -30,10 +30,10 @@ class MySocket:
         (clientSocket, client_address) = self.cleint_socket.accept()
         print(clientSocket, client_address)
 
-        verify_totp = clientSocket.recv(1024).decode('utf-8')
+        verify_totp = clientSocket.recv(1024)
         print("before decryption", verify_totp)
         decrypted_data = self.cipher.decrypt(verify_totp)
-        print("verify_totp", decrypted_data)
+        print("verify_totp", decrypted_data.decode('utf-8'))
 
         if (not self.totp.verify(decrypted_data)):
             print("Invalid TOTP")
