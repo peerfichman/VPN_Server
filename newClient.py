@@ -33,16 +33,34 @@ class MySocket:
             try:
                 s.connect((config['HOST_NAME'], config['SERVER_PORT']))
                 s.sendall(request)
-                while 1:
-                    # receive data from web server
-                    data = s.recv(config['MAX_REQUEST_LEN'])
+                print("sent all")
+                
+                data = s.recv(config['MAX_REQUEST_LEN'])
+                print("recieved")
+                print(data)
+                clientSocket.send(data) # send to browser/client
+                print("sent to browser")
+                s.close()
 
-                    if (len(data) > 0):
-                        clientSocket.send(data) # send to browser/client
-                    else:
-                        break
+
+                # while 1:
+                #     # receive data from web server
+                #     data = s.recv(config['MAX_REQUEST_LEN'])
+                #     print("recieved")
+                #     print(data)
+
+                #     if (len(data) > 0):
+                #         clientSocket.send(data) # send to browser/client
+                #         print("sent to browser")
+                #     else:
+                #         print("close else")
+                #         s.close()
+                #         break
+
             except socket.error as e:
                 print("Socket error", e)
+                print("close error")
+                s.close()
 
 
 
