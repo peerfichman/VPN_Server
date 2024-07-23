@@ -6,10 +6,7 @@ import os
 
 load_dotenv("./.env")
  
-FERNET_KEY = b'PZRDgn6RszZSOmPrU-FuL1ZT5KpPYN5BNlRo4s4_gTw='
-HOST_NAME='10.10.0.5'
-SERVER_PORT=9999
-MAX_REQUEST_LEN=65536
+FERNET_KEY='OOQUMojR77nun9bM9PFi6YIe2-7z1z9AVlb9irfYGT4='
 
 class MySocket:
     max_request_len = os.getenv('MAX_REQUEST_LEN')

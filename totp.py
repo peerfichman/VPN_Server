@@ -1,9 +1,10 @@
 import pyotp
 import time
+from cryptography.fernet import Fernet
 
 totp = pyotp.TOTP('base32secret3232')
 totp2 = pyotp.TOTP('base32secret323232')
-
+print(Fernet.generate_key())
 
 # OTP verified for current time
 x = totp.now()

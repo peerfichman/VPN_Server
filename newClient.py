@@ -14,9 +14,8 @@ class MySocket:
         host_name = os.getenv('HOST_NAME')
         server_port = os.getenv('SERVER_PORT')
         client_port = os.getenv('CLIENT_PORT')
-
         self.totp = pyotp.TOTP('base32secret3232')
-        self.cipher = Fernet(encryption_key)
+        self.cipher = Fernet(encryption_key.encode())
 
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
