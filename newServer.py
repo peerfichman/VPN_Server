@@ -1,33 +1,58 @@
-import signal
 import socket
+import pyotp
+from cryptography.fernet import Fernet
+from dotenv import load_dotenv
+import os
 
-config = {
-    'HOST_NAME': '10.10.0.5',
-    'CLIENT_PORT': 8888,
-    'SERVER_PORT': 9999,
-    'MAX_REQUEST_LEN': 65536
-    }
+
+load_dotenv("./.env")
+ 
 
 class MySocket:
-    
-    def __init__(self, config):
-        # Create a TCP socket
+    max_request_len = int(os.getenv('MAX_REQUEST_LEN'))
+
+    def __init__(self):
+        encryption_key = os.getenv('FERNET_KEY')
+        host_name = os.getenv('HOST_NAME')
+        server_port = int(os.getenv('SERVER_PORT'))
+        totp_key = os.getenv('TOTP_KEY')
+        
+        self.totp = pyotp.TOTP(totp_key)        
+        self.cipher = Fernet(encryption_key)
+
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # bind the socket to a public host, and a port   
-        self.cleint_socket.bind((config['HOST_NAME'], config['SERVER_PORT']))
-        self.cleint_socket.listen(10) # become a server socket
+        self.cleint_socket.bind((host_name, server_port))
+        self.cleint_socket.listen(10)
 
     def run(self):
-        while True:
-            # Establish the connection
-            print("Ready to serve...")
-            (clientSocket, client_address) = self.cleint_socket.accept() 
-            print(clientSocket, client_address)
+        # Establish the connection
+        print("Ready to serve...")
+        (clientSocket, client_address) = self.cleint_socket.accept()
+        print(clientSocket, client_address)
 
-            request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
+        verify_totp = clientSocket.recv(1024)
+        print("before decryption", verify_totp)
+        decrypted_data = self.cipher.decrypt(verify_totp)
+        print("before decoding", decrypted_data)
+        decoded_data = decrypted_data.decode('utf-8')
+        print("verify_totp", decrypted_data.decode('utf-8'))
+
+        if (not self.totp.verify(decoded_data)):
+            print("Invalid TOTP")
+            clientSocket.close()
+            return
+            
+        while True:
+            request = clientSocket.recv(self.max_request_len) 
+            if len(request) == 0:
+                continue
+
+            print("request_before_decription", request)
+            request = self.cipher.decrypt(request)
             print("request", request)
             
+
             # parse the first line
             first_line = request.split(b'\n')[0]
             # print("first_line", first_line)
@@ -71,17 +96,20 @@ class MySocket:
                 s.sendall(request)
                 while 1:
                     # receive data from web server
-                    data = s.recv(config['MAX_REQUEST_LEN'])
-
+                    data = s.recv(self.max_request_len)
+                    print("data", data)
                     if (len(data) > 0):
-                        clientSocket.send(data) # send to browser/client
+                        data_encrypted = self.cipher.encrypt(data)
+                        print("data_encrypted", data_encrypted)
+                        clientSocket.send(data_encrypted) # send to browser/client
+                        print("data sent")
                     else:
+                        print("no data")
                         break
             except socket.error as e:
                 print("Socket error", e)
 
 
-
-x = MySocket(config)
+x = MySocket()
 
 x.run()
