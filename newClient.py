@@ -43,10 +43,10 @@ class MySocket:
             print(clientSocket, client_address)
             print("wait for browser")
             request = clientSocket.recv(self.max_request_len)
+            request = self.cipher.encrypt(request)
             print("request", request)
             print("sending request to server")
             try:
-                request = self.cipher.encrypt(request)
                 self.server_socket.send(request)
                 while 1:
                     print("waiting for server response")
