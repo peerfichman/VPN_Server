@@ -13,7 +13,7 @@ class MySocket:
         encryption_key = os.getenv('FERNET_KEY')
         host_name = os.getenv('HOST_NAME')
         server_port = int(os.getenv('SERVER_PORT'))
-        totp_key = int(os.getenv('TOTP_KEY'))
+        totp_key = os.getenv('TOTP_KEY')
         
         self.totp = pyotp.TOTP(totp_key)        
         self.cipher = Fernet(encryption_key)
