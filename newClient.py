@@ -14,7 +14,8 @@ class MySocket:
         host_name = os.getenv('HOST_NAME')
         server_port = int(os.getenv('SERVER_PORT'))
         client_port = int(os.getenv('CLIENT_PORT'))
-        self.totp = pyotp.TOTP('base32secret3232')
+        totp_key = int(os.getenv('TOTP_KEY'))
+        self.totp = pyotp.TOTP(totp_key)
         self.cipher = Fernet(encryption_key.encode())
 
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,7 +37,7 @@ class MySocket:
         
 
     def run(self):
-        self.server_socket.settimeout(5)
+        self.server_socket.settimeout(8)
         while True:
             # print("Ready to serve...")
             (clientSocket, client_address) = self.cleint_socket.accept()
