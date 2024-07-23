@@ -20,7 +20,7 @@ class MySocket:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
-
+        self.server_socket.settimeout(10)
     def run(self):
         while True:
             # print("Ready to serve...")
@@ -30,16 +30,19 @@ class MySocket:
             request = clientSocket.recv(config['MAX_REQUEST_LEN'])
             print("request", request)
             print("sending request to server")
-            self.server_socket.send(request)
-            while 1:
-                print("waiting for server response")
-                data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
-                if (len(data) > 0):
-                    print("data received from server:", data)
-                    clientSocket.send(data)
-                    print("data sent to browser")
-                else:
-                    break
+            try:
+                self.server_socket.send(request)
+                while 1:
+                    print("waiting for server response")
+                    data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
+                    if (len(data) > 0):
+                        print("data received from server:", data)
+                        clientSocket.send(data)
+                        print("data sent to browser")
+                    else:
+                        break
+            except socket.error as e:
+                print("Socket error", e)
 
 
     # def __init__(self, config):

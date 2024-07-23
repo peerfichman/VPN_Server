@@ -28,6 +28,9 @@ class MySocket:
             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
             print("request", request)
             
+            if len(request) == 0:
+                continue
+            
             # parse the first line
             first_line = request.split(b'\n')[0]
             # print("first_line", first_line)
