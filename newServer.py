@@ -11,7 +11,7 @@ config = {
 class MySocket:
      
     def __init__(self, config):
-        self.totp = pyotp.TOTP('base32secret323232')
+        self.totp = pyotp.TOTP('base32secret3232')
         # Create a TCP socket
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Re-use the socket
