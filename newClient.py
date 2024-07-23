@@ -26,11 +26,20 @@ class MySocket:
             # print("Ready to serve...")
             (clientSocket, client_address) = self.cleint_socket.accept()
             print(clientSocket, client_address)
+            print("wait for browser")
             request = clientSocket.recv(config['MAX_REQUEST_LEN'])
-            # print("request", request)
+            print("request", request)
+            print("sending request to server")
             self.server_socket.send(request)
-            data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
-            print("data received from server:", data)
+            while 1:
+                print("waiting for server response")
+                data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
+                if (len(data) > 0):
+                    print("data received from server:", data)
+                    clientSocket.send(data)
+                    print("data sent to browser")
+                else:
+                    break
 
 
     # def __init__(self, config):
