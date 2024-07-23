@@ -26,28 +26,23 @@ class MySocket:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((host_name, int(server_port)))
-        token = self.totp.now()
-        print("token", token)
-        token = bytes(token, encoding='utf-8')
-        print("token_encoded", token)
-        encrypted_token = self.cipher.encrypt(token)
-        print("token_encrypted", encrypted_token)
 
+        token = self.totp.now()
+        token = bytes(token, encoding='utf-8')
+        encrypted_token = self.cipher.encrypt(token)
         self.server_socket.send(encrypted_token)
         
 
     def run(self):
         self.server_socket.settimeout(8)
         while True:
-            # print("Ready to serve...")
+            print("new connection from browser")
             (clientSocket, client_address) = self.cleint_socket.accept()
             print(clientSocket, client_address)
 
-            print("wait for browser")
             request = clientSocket.recv(self.max_request_len)
             if (len(request) > 0):
                 request = self.cipher.encrypt(request)
-                print("request", request)
                 print("sending request to server")
             else:
                 continue
@@ -58,105 +53,13 @@ class MySocket:
                     data = self.server_socket.recv(self.max_request_len)
 
                     if (len(data) > 0):
-                        print("data before decrypt:", data)
                         data = self.cipher.decrypt(data)
-                        print("data received from server:", data)
                         clientSocket.send(data)
                         print("data sent to browser")
                     else:
                         break
             except socket.error as e:
                 print("Socket error", e)
-
-
-#             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
-#             print("request", request)
-            
-            # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-            # try:
-            #     s.connect((config['HOST_NAME'], config['SERVER_PORT']))
-            #     s.sendall(request)
-            #     print("sent all")
-                
-            #     data = s.recv(config['MAX_REQUEST_LEN'])
-            #     print("recieved")
-            #     print(data)
-            #     clientSocket.send(data) # send to browser/client
-            #     print("sent to browser")
-            #     s.close()
-
-
-                # while 1:
-                #     # receive data from web server
-                #     data = s.recv(config['MAX_REQUEST_LEN'])
-                #     print("recieved")
-                #     print(data)
-
-                #     if (len(data) > 0):
-                #         clientSocket.send(data) # send to browser/client
-                #         print("sent to browser")
-                #     else:
-                #         print("close else")
-                #         s.close()
-                #         break
-
-            # except socket.error as e:
-            #     print("Socket error", e)
-            #     print("close error")
-            #     s.close()
-
-
-
-    # def __init__(self, config):
-    #     # Create a TCP socket
-    #     self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     # Re-use the socket
-    #     self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    #     # bind the socket to a public host, and a port
-    #     self.cleint_socket.bind((config['HOST_NAME'], config['CLIENT_PORT']))
-    #     self.cleint_socket.listen(10)  # become a server socket
-    #
-    # def send_packet(self, data):
-    #     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
-    #     print("sending")
-    #     server_socket.sendall(data)
-    #     # Receive response
-    #     print("sent, now receiving...")
-    #     server_socket.settimeout(5.0)
-    #     response = server_socket.recv(4096)
-    #     print("received")
-    #     server_socket.close()
-    #     return response
-    #
-    # def run(self):
-    #     while True:
-    #         # Establish the connection
-    #         print("Ready to serve...")
-    #         (clientSocket, client_address) = self.cleint_socket.accept()
-    #         print(clientSocket, client_address)
-    #         clientSocket.settimeout(5.0)
-    #         request = clientSocket.recv(config['MAX_REQUEST_LEN'])
-    #         print("request", request)
-    #
-    #         try:
-    #             # self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
-    #             # self.server_socket.sendall(request)
-    #             #while 1:
-    #                 # receive data from web server
-    #                 # data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
-    #             data = self.send_packet(request)
-    #                 # if (len(data) > 0):
-    #             print("data received from server:", data)
-    #             clientSocket.send(data)  # send to browser/client
-    #                 # else:
-    #                 #     break
-    #         except socket.error  as e:
-    #             print("Socket error", e)
-    #         except socket.timeout as e:
-    #             print("Socket timeout error", e)
-
-
 
 
 x = MySocket()
