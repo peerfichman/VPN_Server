@@ -17,17 +17,18 @@ class MySocket:
         # bind the socket to a public host, and a port
         self.cleint_socket.bind((config['HOST_NAME'], config['CLIENT_PORT']))
         self.cleint_socket.listen(10)  # become a server socket
+
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.connect(('127.0.0.1', 9999))
+        self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
 
     def run(self):
         while True:
-            print("Ready to serve...")
-            (clientSocket, client_address) = self.cleint_socket.accept()
-            print(clientSocket, client_address)
-            request = clientSocket.recv(config['MAX_REQUEST_LEN'])
-            print("request", request)
-            self.server_socket.send(request)
+            # print("Ready to serve...")
+            # (clientSocket, client_address) = self.cleint_socket.accept()
+            # print(clientSocket, client_address)
+            # request = clientSocket.recv(config['MAX_REQUEST_LEN'])
+            # print("request", request)
+            self.server_socket.send(b'hi')
 
     # def __init__(self, config):
     #     # Create a TCP socket
