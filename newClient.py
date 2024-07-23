@@ -24,11 +24,14 @@ class MySocket:
     def run(self):
         while True:
             # print("Ready to serve...")
-            # (clientSocket, client_address) = self.cleint_socket.accept()
-            # print(clientSocket, client_address)
-            # request = clientSocket.recv(config['MAX_REQUEST_LEN'])
+            (clientSocket, client_address) = self.cleint_socket.accept()
+            print(clientSocket, client_address)
+            request = clientSocket.recv(config['MAX_REQUEST_LEN'])
             # print("request", request)
-            self.server_socket.send(b'hi')
+            self.server_socket.send(request)
+            data = self.server_socket.recv(config['MAX_REQUEST_LEN'])
+            print("data received from server:", data)
+
 
     # def __init__(self, config):
     #     # Create a TCP socket
