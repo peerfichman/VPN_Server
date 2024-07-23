@@ -46,10 +46,13 @@ class MySocket:
             print("request", request)
             print("sending request to server")
             try:
+                request = self.cipher.encrypt(request)
                 self.server_socket.send(request)
                 while 1:
                     print("waiting for server response")
                     data = self.server_socket.recv(self.max_request_len)
+                    data = self.cipher.decrypt(data)
+
                     if (len(data) > 0):
                         print("data received from server:", data)
                         clientSocket.send(data)

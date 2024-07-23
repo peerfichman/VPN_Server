@@ -44,6 +44,7 @@ class MySocket:
             
         while True:
             request = clientSocket.recv(self.max_request_len) 
+            request = self.cipher.decrypt(request)
             print("request", request)
             
             if len(request) == 0:
@@ -94,6 +95,7 @@ class MySocket:
                     # receive data from web server
                     data = s.recv(self.max_request_len)
                     print("data", data)
+                    data = self.cipher.encrypt(data)
                     clientSocket.send(data) # send to browser/client
                     if (len(data) > 0):
                         print("data sent")
