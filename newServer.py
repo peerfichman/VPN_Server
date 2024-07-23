@@ -3,7 +3,7 @@ import socket
 import threading
 
 config = {
-    'HOST_NAME': '127.0.0.1',
+    'HOST_NAME': '10.10.0.5',
     'CLIENT_PORT': 8888,
     'SERVER_PORT': 9999,
     'MAX_REQUEST_LEN': 65536
@@ -17,8 +17,8 @@ class MySocket:
         self.cleint_socket.bind((config['HOST_NAME'], config['SERVER_PORT']))
         self.cleint_socket.listen(10) # become a server socket
 
-    def run_thread(self):
-        request = self.clientSocket.recv(config['MAX_REQUEST_LEN']) 
+    def run_thread(self, clientSocket: socket, client_address):
+        request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
         print("request", request)
         
         # parse the first line
@@ -67,7 +67,7 @@ class MySocket:
                 data = s.recv(config['MAX_REQUEST_LEN'])
 
                 if (len(data) > 0):
-                    self.clientSocket.send(data) # send to browser/client
+                    clientSocket.send(data) # send to browser/client
                 else:
                     break
         except socket.error as e:
@@ -77,18 +77,16 @@ class MySocket:
         while True:
             # Establish the connection
             print("Ready to serve...")
-            (clientSocket, client_address) = self.cleint_socket.accept() 
-            self.clientSocket = clientSocket
-            self.client_address = client_address
+            (s, s_address) = self.cleint_socket.accept() 
 
-            print(clientSocket, client_address)
+            print(s, s_address)
 
-            d = threading.Thread(name=self._getClientName(client_address), target = self.run_thread, args=(clientSocket, client_address))
-            d.daemon(True)
+            d = threading.Thread(name=self._getClientName(s_address), target=self.run_thread, args=(s, s_address))
+            d.daemon = True
             d.start()
 
-    def _getClientName(self, client_address):
-        return client_address
+    def _getClientName(self, s_address):
+        return s_address
             
 
 
