@@ -19,13 +19,10 @@ class MySocket:
         self.totp = pyotp.TOTP('base32secret3232')        
         self.cipher = Fernet(encryption_key)
 
-        # Create a TCP socket
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # Re-use the socket
         self.cleint_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        # bind the socket to a public host, and a port   
-        self.cleint_socket.bind((host_name, server_port))
-        self.cleint_socket.listen(10) # become a server socket
+        self.cleint_socket.bind((host_name, int(server_port)))
+        self.cleint_socket.listen(10)
 
     def run(self):
         # Establish the connection
