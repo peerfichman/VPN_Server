@@ -96,10 +96,10 @@ class MySocket:
                     # receive data from web server
                     data = s.recv(self.max_request_len)
                     print("data", data)
-                    data_encrypted = self.cipher.encrypt(data)
-                    print("data_encrypted", data_encrypted)
-                    clientSocket.send(data_encrypted) # send to browser/client
                     if (len(data) > 0):
+                        data_encrypted = self.cipher.encrypt(data)
+                        print("data_encrypted", data_encrypted)
+                        clientSocket.send(data_encrypted) # send to browser/client
                         print("data sent")
                     else:
                         print("no data")

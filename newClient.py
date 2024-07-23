@@ -14,7 +14,7 @@ class MySocket:
         host_name = os.getenv('HOST_NAME')
         server_port = int(os.getenv('SERVER_PORT'))
         client_port = int(os.getenv('CLIENT_PORT'))
-        totp_key = int(os.getenv('TOTP_KEY'))
+        totp_key = os.getenv('TOTP_KEY')
         self.totp = pyotp.TOTP(totp_key)
         self.cipher = Fernet(encryption_key.encode())
 
@@ -44,9 +44,12 @@ class MySocket:
             print(clientSocket, client_address)
             print("wait for browser")
             request = clientSocket.recv(self.max_request_len)
-            request = self.cipher.encrypt(request)
-            print("request", request)
-            print("sending request to server")
+            if (len(request) > 0):
+                request = self.cipher.encrypt(request)
+                print("request", request)
+                print("sending request to server")
+            else:
+                continue
             try:
                 self.server_socket.send(request)
                 while 1:
