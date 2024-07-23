@@ -58,6 +58,7 @@ class MySocket:
                     data = self.server_socket.recv(self.max_request_len)
 
                     if (len(data) > 0):
+                        print("data before decrypt:", data)
                         data = self.cipher.decrypt(data)
                         print("data received from server:", data)
                         clientSocket.send(data)
