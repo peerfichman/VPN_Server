@@ -25,10 +25,12 @@ class MySocket:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((host_name, int(server_port)))
-
-        token = bytes(self.totp.now(), encoding='utf-8')
+        token = self.totp.now()
+        print("token", token)
+        token = bytes(token, encoding='utf-8')
+        print("token_encoded", token)
         encrypted_token = self.cipher.encrypt(token)
-        print("sending totp", encrypted_token)
+        print("token_encrypted", encrypted_token)
 
         self.server_socket.send(encrypted_token)
         

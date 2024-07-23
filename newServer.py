@@ -33,9 +33,11 @@ class MySocket:
         verify_totp = clientSocket.recv(1024)
         print("before decryption", verify_totp)
         decrypted_data = self.cipher.decrypt(verify_totp)
+        print("before decoding", decrypted_data)
+        decoded_data = decrypted_data.decode('utf-8')
         print("verify_totp", decrypted_data.decode('utf-8'))
 
-        if (not self.totp.verify(decrypted_data)):
+        if (not self.totp.verify(decoded_data)):
             print("Invalid TOTP")
             clientSocket.close()
             return
