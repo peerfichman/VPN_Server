@@ -44,6 +44,7 @@ class MySocket:
             
         while True:
             request = clientSocket.recv(self.max_request_len) 
+            print("request_before_decription", request)
             request = self.cipher.decrypt(request)
             print("request", request)
             
