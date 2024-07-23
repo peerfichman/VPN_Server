@@ -1,5 +1,5 @@
-import signal
 import socket
+import pyotp
 
 config = {
     'HOST_NAME': '10.10.0.5',
@@ -11,6 +11,7 @@ config = {
 class MySocket:
      
     def __init__(self, config):
+        self.totp = pyotp.TOTP('base32secret3232')
         # Create a TCP socket
         self.cleint_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Re-use the socket
@@ -22,15 +23,25 @@ class MySocket:
     def run(self):
         # Establish the connection
         print("Ready to serve...")
-        (clientSocket, client_address) = self.cleint_socket.accept() 
+        (clientSocket, client_address) = self.cleint_socket.accept()
         print(clientSocket, client_address)
+
+        verify_totp = clientSocket.recv(1024)
+        if (not self.totp.verify(verify_totp)):
+            print("Invalid TOTP")
+            clientSocket.close()
+            return
+        
+        while True:
+            print("TOTP verified")
+            
         while True:
             request = clientSocket.recv(config['MAX_REQUEST_LEN']) 
             print("request", request)
             
             if len(request) == 0:
                 continue
-            
+
             # parse the first line
             first_line = request.split(b'\n')[0]
             # print("first_line", first_line)

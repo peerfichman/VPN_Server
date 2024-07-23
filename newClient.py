@@ -20,7 +20,7 @@ class MySocket:
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.connect((config['HOST_NAME'], config['SERVER_PORT']))
-        self.server_socket.settimeout(10)
+        self.server_socket.settimeout(2)
     def run(self):
         while True:
             # print("Ready to serve...")
